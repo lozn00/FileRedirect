@@ -1,0 +1,82 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "cn.qssq666.fileredirect"
+        minSdkVersion 15
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        externalNativeBuild {
+            cmake {
+//            arguments '-DBUILD_TESTING=OFF', '-DANDROID_TOOLCHAIN=gcc'
+                arguments "-DANDROID_STL=c++_shared", "-DSHARED=false","-DDEBUG=OFF"//打开hook zz日志。
+//解决roid.injected.build.abi'gradle标志设置的ABIs [armeabi-v7a，armeabi]包含的'ARMEABI'不是此项目的目标
+                cppFlags "-fexceptions"
+                abiFilters 'armeabi-v7a', 'arm64-v8a'
+            }
+        }
+    }
+
+    signingConfigs {
+        debug {
+
+
+            Properties properties = new Properties()
+            properties.load(project.rootProject.file(System.getenv("qssqsignfile")).newDataInputStream())
+            def keyPwd = properties.getProperty("signingConfigs.keyPwd")
+            def keyName = properties.getProperty("signingConfigs.keyName")
+            def keyPath = properties.getProperty("signingConfigs.path")
+            storeFile file(keyPath)
+            storePassword keyPwd
+            keyAlias keyName
+            keyPassword keyPwd
+
+        }
+        release {
+
+            Properties properties = new Properties()
+            properties.load(project.rootProject.file(System.getenv("qssqsignfile")).newDataInputStream())
+            def keyPwd = properties.getProperty("signingConfigs.keyPwd")
+            def keyName = properties.getProperty("signingConfigs.keyName")
+            def keyPath = properties.getProperty("signingConfigs.path")
+            storeFile file(keyPath)
+            storePassword keyPwd
+            keyAlias keyName
+            keyPassword keyPwd
+
+        }
+    }
+    buildTypes {
+        debug {
+            minifyEnabled false
+            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    externalNativeBuild {
+        cmake {
+            path "CMakeLists.txt"
+        }
+    }
+
+
+
+}
+
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+}
