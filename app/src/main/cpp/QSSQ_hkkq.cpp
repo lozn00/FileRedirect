@@ -3,7 +3,6 @@
 #include <android/Foundation/IOUniformer.h>
 
 
-
 #include<stdio.h>
 #include<iostream>
 #include<string.h>
@@ -58,7 +57,9 @@ callParentVoidParamMethod(JNIEnv *env, jobject thiz, jobject currentObj, jstring
 
     //   printf("签名 %s 父类名 %s", methodSignChars, classNameChars);
     jclass fclass = (jclass) QSSQ_Constant::classForNameX(env, thiz, classNameChars,
-                                                          QSSQ_Constant::getClassLoaderFromObject(env, currentObj)); //env->FindClass(methodSignChars);
+                                                          QSSQ_Constant::getClassLoaderFromObject(
+                                                                  env,
+                                                                  currentObj)); //env->FindClass(methodSignChars);
     if (fclass == NULL) {
 
         //MessageBoxA(0, "父类为空!", "提示", 0);
@@ -72,9 +73,9 @@ callParentVoidParamMethod(JNIEnv *env, jobject thiz, jobject currentObj, jstring
         printf("找不到方法");
         return;
     }
-    QSSQ_CheckEnvImpl impl;
-    impl.hKillerLZ(env);
-    impl.checkMemoryLZ(env);
+    /* QSSQ_CheckEnvImpl impl;
+     impl.hKillerLZ(env);
+     impl.checkMemoryLZ(env);*/
     env->CallNonvirtualVoidMethod(currentObj, fclass, jmethodID);
 }
 
@@ -88,22 +89,21 @@ extern "C" JNIEXPORT void JNICALL aaaa(JNIEnv *env, jobject thiz) {
 
 #define JNI_START JNIEnv *env, jclass cl
 //=========================================
-extern "C"  __attribute__((visibility("default"))) void fixAndroidO(JNI_START) {
+extern "C" __attribute__((visibility("default"))) void fixAndroidO(JNI_START) {
 
     QSSQ_CheckEnvImpl impl;
     impl.hKillerLZ(env);
-    impl.checkMemoryLZ(env);
+    impl.checkMemoryLZ(env, 694886);
 }
+
 static void
 nativeEnableIORedirect(JNIEnv *env, jclass jclass1, jstring selfSoPath, jint apiLevel,
                        jint preview_api_level) {
     ScopeUtfString so_path(env, selfSoPath);
     IOUniformer::startUniformer(so_path.c_str(), apiLevel, preview_api_level);
-
-//QSSQ_CheckEnvImpl impl;
-//    impl.hKillerLZ(env);
-//    impl.checkMemoryLZ(env);
-
+    QSSQ_CheckEnvImpl impl;
+    impl.hKillerLZ(env);
+    impl.checkMemoryLZ(env, 694886);
 
 
 }
@@ -149,15 +149,15 @@ nativeReverseRedirectedPath(JNIEnv *env, jclass jclazz, jstring redirectedPath) 
 
 //#define ENCODECLASS "android/support/v4/app/gnehzoul"//指定要注册的
 int registerNatives(JNIEnv *env) {
-    JNINativeMethod gMethods[] ={
-          { "bwn6a6b", "()V", (void *) aaaa}
-         ,{ "nativeEnableIORedirect",  "(Ljava/lang/String;II)V",  (void *)nativeEnableIORedirect}
-         ,{ "nativeIOWhitelist",  "(Ljava/lang/String;)V",  (void *)nativeIOWhitelist}
-         ,{ "nativeIOForbid", "(Ljava/lang/String;)V",   (void *)nativeIOForbid}
-         ,{ "nativeIORedirect", "(Ljava/lang/String;Ljava/lang/String;)V",  (void *)nativeIORedirect}
-         ,{ "nativeGetRedirectedPath",  "(Ljava/lang/String;)Ljava/lang/String;",  (void *)nativeGetRedirectedPath,}
-         ,{ "fixAndroidO", "()V",   (void *)fixAndroidO,}
-         ,{ "nativeReverseRedirectedPath", "(Ljava/lang/String;)Ljava/lang/String;" ,  (void *)nativeReverseRedirectedPath}
+    JNINativeMethod gMethods[] = {
+            {"bwn6a6b",                     "()V",                                     (void *) aaaa},
+            {"nativeEnableIORedirect",      "(Ljava/lang/String;II)V",                 (void *) nativeEnableIORedirect},
+            {"nativeIOWhitelist",           "(Ljava/lang/String;)V",                   (void *) nativeIOWhitelist},
+            {"nativeIOForbid",              "(Ljava/lang/String;)V",                   (void *) nativeIOForbid},
+            {"nativeIORedirect",            "(Ljava/lang/String;Ljava/lang/String;)V", (void *) nativeIORedirect},
+            {"nativeGetRedirectedPath",     "(Ljava/lang/String;)Ljava/lang/String;",  (void *) nativeGetRedirectedPath,},
+            {"fixAndroidO",                 "()V",                                     (void *) fixAndroidO,},
+            {"nativeReverseRedirectedPath", "(Ljava/lang/String;)Ljava/lang/String;",  (void *) nativeReverseRedirectedPath}
     };
 //    JNINativeMethod gMethods[] = {currentMethod};
     //FFF define ENCODECLASS "cn/qssq666/EncryptUtilN"//指定要注册的类
@@ -175,17 +175,17 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
         return JNI_ERR;
     }
     JniHelper::setJavaVM(vm);
-   assert(env != NULL);
-      if (!registerNatives(env)) {//注册
+    assert(env != NULL);
+    if (!registerNatives(env)) {//注册
 
 
-          LOGW_("注册失败！");
-          return JNI_ERR;
-      }
+        LOGW_("注册失败！");
+        return JNI_ERR;
+    }
 
     QSSQ_CheckEnvImpl impl;
     impl.hKillerLZ(env);
-    impl.checkMemoryLZ(env);
+    impl.checkMemoryLZ(env, 64);
 
 //    std::utility
     LOGW_("JNI-LOAD-------over");
