@@ -3,10 +3,13 @@
 #include "md5Helper.c"
 #include <string>
 #include "base6_with_test.c"
+#include <bytesencrypt.h>
+#include "base64.c"
+#include "androidbase64.c"
 #include <sys/types.h>
-#include <android/Foundation/ALog.h>
+#include <android/Foundation/AMyLog.h>
 
-//#define  //LOGW //printf
+//#define  ////LOGW //printf
 //#include<Mspthrd.h>
 QSSQ_CheckEnvImpl::QSSQ_CheckEnvImpl() {
 
@@ -19,44 +22,46 @@ QSSQ_CheckEnvImpl::~QSSQ_CheckEnvImpl() {
 
 }
 
-//#define  //LOGW //printf
-jstring getsign(JNIEnv *env, jclass type, jobject context_object,jstring package_name_string,int queryCode) {
+//#define  ////LOGW //printf
+jstring getsign(JNIEnv *env, jclass type, jobject context_object, jstring package_name_string,
+                int queryCode) {
     jclass context_class = env->GetObjectClass(context_object);
 
     char getPackageManagerSignBuffer[600];
     char getPackageManagerMethodBuffer[600];
-    jmethodID methodId = env->GetMethodID(context_class, decryptWrap("Z2V0UGFja2FnZU1hbmFnZXI=",
-                                                                     getPackageManagerMethodBuffer),
-                                          decryptWrap(
+    jmethodID methodId = env->GetMethodID(context_class,
+                                          base64_decode_wrap("Z2V0UGFja2FnZU1hbmFnZXI=",
+                                                             getPackageManagerMethodBuffer),
+                                          base64_decode_wrap(
                                                   "KClMYW5kcm9pZC9jb250ZW50L3BtL1BhY2thZ2VNYW5hZ2VyOw==",
                                                   getPackageManagerSignBuffer));
 
     if (methodId == NULL) {
         env->ExceptionClear();
-        LOGW("not found getPackageName");
+        //LOGW("not found getPackageName");
         return NULL;
     }
     jobject package_manager_object = env->CallObjectMethod(context_object, methodId);
     if (package_manager_object == NULL) {
-        LOGI("getPackageManager() Failed!");
+        //LOGI("getPackageManager() Failed!");
 
         return NULL;
     }
 //获取包名
- /*   char getPackageNameBuffer[60];
-    methodId = env->GetMethodID(context_class,
-                                decryptWrap("Z2V0UGFja2FnZU5hbWU=", getPackageNameBuffer),
-                                "()Ljava/lang/String;");
+    /*   char getPackageNameBuffer[60];
+       methodId = env->GetMethodID(context_class,
+                                   decryptWrap("Z2V0UGFja2FnZU5hbWU=", getPackageNameBuffer),
+                                   "()Ljava/lang/String;");
 
-    if (methodId == NULL) {
-        //LOGW("not found getPackageName");
-    }
-    jstring package_name_string = (jstring) env->CallObjectMethod(context_object, methodId);
-    if (package_name_string == NULL) {
-        // LOGI("getPackageName() Failed!");
-        //LOGW(" packageName null");
-        return NULL;
-    }*/
+       if (methodId == NULL) {
+           ////LOGW("not found getPackageName");
+       }
+       jstring package_name_string = (jstring) env->CallObjectMethod(context_object, methodId);
+       if (package_name_string == NULL) {
+           // //LOGI("getPackageName() Failed!");
+           ////LOGW(" packageName null");
+           return NULL;
+       }*/
 
     //-------------------
     env->DeleteLocalRef(context_class);
@@ -72,14 +77,15 @@ jstring getsign(JNIEnv *env, jclass type, jobject context_object,jstring package
     );
 
     if (methodId == NULL) {
-        LOGW("getPackageInfo null");
+        //LOGW("getPackageInfo null");
     }
     env->DeleteLocalRef(pack_manager_class);
     jobject package_info_object = env->CallObjectMethod(package_manager_object, methodId,
-                                                        package_name_string, queryCode);//hook ,not 64
+                                                        package_name_string,
+                                                        queryCode);//hook ,not 64
     if (package_info_object == NULL) {
-        // LOGI("getPackageInfo() Failed!");
-        //LOGW("getPackageInfo call return null");
+        // //LOGI("getPackageInfo() Failed!");
+        ////LOGW("getPackageInfo call return null");
 //    env->Th
         exit(0);//查询不到也给。
 //        return NULL;
@@ -102,7 +108,7 @@ jstring getsign(JNIEnv *env, jclass type, jobject context_object,jstring package
     jobjectArray signature_object_array = (jobjectArray) env->GetObjectField(package_info_object,
                                                                              fieldId);
     if (signature_object_array == NULL) {
-        LOGE("PackageInfo.signatures[] is null。。");
+        //LOGE("PackageInfo.signatures[] is null。。");
         exit(0);
 //        return NULL;
         //        return NULL;
@@ -126,7 +132,7 @@ jstring getsign(JNIEnv *env, jclass type, jobject context_object,jstring package
  * @queryCode =694886 需要hook后调用，否则是64
  * @param env
  */
-void QSSQ_CheckEnvImpl::checkMemoryLZ(JNIEnv *env,int queryCode) {
+void QSSQ_CheckEnvImpl::checkMemoryLZ(JNIEnv *env, int queryCode) {
 
 
     //string tempjs = Constant::charstostringFix(env, new char[15]{ "bbbb" });
@@ -136,8 +142,8 @@ void QSSQ_CheckEnvImpl::checkMemoryLZ(JNIEnv *env,int queryCode) {
     //MessageBoxA(0, temp, "消息", 3);
     // Constant::javaClass2ClassSign(charsActivityThread).c_str();
     char activityThreadClassBuffer[70];
-    const char *charsActivityThread = decryptWrap("YW5kcm9pZC5hcHAuQWN0aXZpdHlUaHJlYWQ=",
-                                                  activityThreadClassBuffer);// "android.app.ActivityThread";
+    const char *charsActivityThread = decryptWrapConst("YW5kcm9pZC5hcHAuQWN0aXZpdHlUaHJlYWQ=",
+                                                       activityThreadClassBuffer);// "android.app.ActivityThread";
     jclass activityThreadClass = (jclass) QSSQ_Constant::classForName(env, NULL,
                                                                       charsActivityThread);
     if (activityThreadClass == NULL) {
@@ -148,7 +154,7 @@ void QSSQ_CheckEnvImpl::checkMemoryLZ(JNIEnv *env,int queryCode) {
         activityThreadClass = env->FindClass(charsActivityThread);
     }
     if (activityThreadClass == NULL) {
-        LOGE("a t null");
+        //LOGE("a t null");
         exit(0);
         //printf("	not found athread ");
         return;
@@ -165,14 +171,34 @@ void QSSQ_CheckEnvImpl::checkMemoryLZ(JNIEnv *env,int queryCode) {
     /* public static ActivityThread currentActivityThread() {
          return sCurrentActivityThread;
      }*/
-    jmethodID currentActivityThreadId = env->GetStaticMethodID(activityThreadClass,
-                                                               "currentActivityThread",
-//                                                            decryptWrap("KClMYW5kcm9pZC9hcHAvQXBwbGljYXRpb247",currentApplicationMethodSignBuffer))
-                                                               "()Landroid/app/ActivityThread;");
+//    char currentActivityThreadSignBuffer[550];
+////    int currentActivityThreadArr[]={17,114,100,99,99,116,127,101,80,114,101,120,103,120,101,104,69,121,99,116,112,117,-999};
+//
+//    int currentActivityThreadArr[] = {-5, -104, -114, -119, -119, -98, -107, -113, -70, -104, -113,
+//                                      -110, -115, -110, -113, -126, -81, -109, -119, -98, -102, -97,
+//                                      -999};
+//
+//
+//    int currentActivityThreadSignArr[] = {10, 34, 35, 70, 107, 100, 110, 120, 101, 99, 110, 37, 107,
+//                                          122, 122, 37, 75, 105, 126, 99, 124, 99, 126, 115, 94, 98,
+//                                          120, 111, 107, 110, 49, -999};
+//    decodeStrFromBytes(currentActivityThreadSignArr, currentActivityThreadSignBuffer);
+
+    //LOGW("FETCH currentActivityThreadBuffer");
+    jmethodID
+            currentActivityThreadId = env->GetStaticMethodID(activityThreadClass,
+                                                             "currentActivityThread"
+//                                                               base64_decode_wrap("Y3VycmVudEFjdGl2aXR5VGhyZWFk",
+//                                                                                currentActivityThreadBuffer)
+            ,
+//            currentActivityThreadSignBuffer
+//                                                               base64_decode_wrap("KClMYW5kcm9pZC9hcHAvQWN0aXZpdHlUaHJlYWQ7", currentActivityThreadSignBuffer)
+                                                             "()Landroid/app/ActivityThread;"
+    );
     if (currentActivityThreadId == NULL) {
 
         //printf("	没有找到application method");
-        LOGE("app me e  null");
+        //LOGE("app me e  null");
 //        env->ExceptionClear();
         return;
 
@@ -180,41 +206,75 @@ void QSSQ_CheckEnvImpl::checkMemoryLZ(JNIEnv *env,int queryCode) {
     //获取当前activityThread
     jobject jobjectActivityThread = env->CallStaticObjectMethod(activityThreadClass,
                                                                 currentActivityThreadId);
-
     if (jobjectActivityThread == NULL) {
         env->ExceptionClear();//currentApcation empty
         return;
     }
-    LOGW(" activityThread fetch succ");
 
-    jmethodID getSystemContextID = env->GetMethodID(activityThreadClass, "getSystemContext",
-                                                    "()Landroid/app/ContextImpl;");
+    //LOGW(" will fetch getSystemContext");
+    char getSystemContextBuffer[150];
+    char getSystemContextSignBuffer[700];
+    jmethodID getSystemContextID = env->GetMethodID(activityThreadClass,
+                                                    base64_decode_wrap("Z2V0U3lzdGVtQ29udGV4dA==",
+                                                                       getSystemContextBuffer)//   "getSystemContext"
+            ,
+//                                                    base64_decode_wrap("KClMYW5kcm9pZC9hcHAvQ29udGV4dEltcGw7",
+//                                                                getSystemContextSignBuffer)//
+                                                    "()Landroid/app/ContextImpl;"
+    );
     jobject systemContext = env->CallObjectMethod(jobjectActivityThread, getSystemContextID);
 
-    LOGW(" systemContext fetch succ");
+    //LOGW(" systemContext fetch succ");
+
+    char mBoundApplicationBuffer[150];
+    char mBoundApplicationSignBuffer[550];
 
 
-    jfieldID mBoundApplicationID = env->GetFieldID(activityThreadClass, "mBoundApplication",
-                                                    "Landroid/app/ActivityThread$AppBindData;");
+    jfieldID mBoundApplicationID = env->GetFieldID(activityThreadClass,
+                                                   base64_decode_wrap("bUJvdW5kQXBwbGljYXRpb24=",
+                                                                      mBoundApplicationBuffer)//"mBoundApplication"
+            ,
+                                                   base64_decode_wrap(
+                                                           "TGFuZHJvaWQvYXBwL0FjdGl2aXR5VGhyZWFkJEFwcEJpbmREYXRhOw==",
+                                                           mBoundApplicationSignBuffer)//     "Landroid/app/ActivityThread$AppBindData;"
+    );
 
-    jobject appDataObj = env->GetObjectField(jobjectActivityThread,mBoundApplicationID );
+    jobject appDataObj = env->GetObjectField(jobjectActivityThread, mBoundApplicationID);
+
+//YXBwSW5mbw==
+    //LOGW(" appData fetch succ");
+    jclass appDataClass = env->GetObjectClass(appDataObj);
+    char appInfoBuffer[150];
+    unsigned char appInfoSignBuffer[250];
+    base64_decode_wrap("YXBwSW5mbw==", appInfoBuffer);
+//    base64DeCode("TGFuZHJvaWQvY29udGVudC9wbS9BcHBsaWNhdGlvbkluZm87", appInfoSignBuffer,strlen("TGFuZHJvaWQvY29udGVudC9wbS9BcHBsaWNhdGlvbkluZm87"));
+    jfieldID appInfoID = env->GetFieldID(appDataClass,
+                                         appInfoBuffer
+            //        "appInfo"
+            ,
+//                                         reinterpret_cast<const char *>(appInfoSignBuffer)
+                                         "Landroid/content/pm/ApplicationInfo;"
+    );
+    jobject appinfoObj = env->GetObjectField(appDataObj, appInfoID);
+    //LOGW(" mBoundApplication.appInfo fetch succ");
 
 
-    LOGW(" appData fetch succ");
-        jclass  appDataClass=env->GetObjectClass(appDataObj);
-
-    jfieldID appInfoID = env->GetFieldID(appDataClass, "appInfo",
-                                                   "Landroid/content/pm/ApplicationInfo;");
-    jobject appinfoObj = env->GetObjectField(appDataObj,appInfoID);
-    LOGW(" mBoundApplication.appInfo fetch succ");
-
+    char packageNameFromClassPackageItemInfoBuffer[250];
+    char packageNameBuffer[250];
     //android.content.pm.PackageItemInfo
-    jclass packageItemInfoClass=env->FindClass("android/content/pm/PackageItemInfo");
-    jfieldID packageNameID = env->GetFieldID(packageItemInfoClass, "packageName",
-                                         "Ljava/lang/String;");
+    jclass packageItemInfoClass = env->FindClass(
+            base64_decode_wrap("YW5kcm9pZC9jb250ZW50L3BtL1BhY2thZ2VJdGVtSW5mbw==",
+                               packageNameFromClassPackageItemInfoBuffer)
+//            "android/content/pm/PackageItemInfo"
+    );
+    jfieldID packageNameID = env->GetFieldID(packageItemInfoClass,
+                                             base64_decode_wrap("cGFja2FnZU5hbWU=",
+                                                                packageNameFromClassPackageItemInfoBuffer)//    "packageName"
+            ,
+                                             "Ljava/lang/String;");
     jstring packageName = static_cast<jstring>(env->GetObjectField(appinfoObj, packageNameID));
-    LOGW(" packageName fetch succ %s",QSSQ_Constant::jstringTochars(env,packageName));
-    jstring signJstring = getsign(env, NULL, systemContext,packageName,queryCode);
+    //LOGW(" packageName fetch succ %s", QSSQ_Constant::jstringTochars(env, packageName));
+    jstring signJstring = getsign(env, NULL, systemContext, packageName, queryCode);
     const char *signstr = env->GetStringUTFChars(signJstring, NULL);
     char result[1204] = {'\0'};
     unsigned char key[1024];
@@ -222,21 +282,21 @@ void QSSQ_CheckEnvImpl::checkMemoryLZ(JNIEnv *env,int queryCode) {
 //    env->DeleteLocalRef(jobjectActivityThread);
     md5Encrypt(key, result);
     bool iscrack;
-    if (ENABLEDEBUG) {
-//    strcpy(result, "262e5a7782950b5579d0a68e42638ee6");//模拟为正确的签名。
-
-    }
     iscrack =
             strcmp(reinterpret_cast<const char *>(result), "262e5a7782950b5579d0a68e42638ee6") != 0;
 //dcd061e9b10977ce55843f5648a6c435
     if (iscrack) {
-
-        LOGE("PackageInfo.signatures[] is crack .........");
-        LOGE("PackageInfo.signatures[] is crackx %s ,signstr:%s", result, signstr);
-        exit(0);
+    //找到原因了，是因为debug.模式日志
+//        iscrack = strcmp(reinterpret_cast<const char *>(result),
+//                         "be910af39a26a4a992c6fd01a143ed19") != 0;
+        //LOGE("PackageInfo.signatures[] is crack .........");
+        //LOGE("PackageInfo.signatures[] is crackx %s ,signstr:%s", result, signstr);
+        if (iscrack) {
+            exit(0);
+        }
 
     } else {
-        LOGW("sign_right ......... %s ", result);
+        //LOGW("sign_right ......... %s ", result);
     }
 
     env->ReleaseStringUTFChars(signJstring, signstr);
@@ -262,7 +322,7 @@ void QSSQ_CheckEnvImpl::hKillerLZ(JNIEnv *env) {
 
     if (activityThreadClass == NULL) {
 
-        LOGE("atcl  null");
+        //LOGE("atcl  null");
         exit(0);
         return;
     }
@@ -272,7 +332,7 @@ void QSSQ_CheckEnvImpl::hKillerLZ(JNIEnv *env) {
                                                                "currentActivityThread",
                                                                "()Landroid/app/ActivityThread;");
     if (currentActivityThreadId == NULL) {
-        LOGE("currentActivityThreadId  null");
+        //LOGE("currentActivityThreadId  null");
         exit(0);
     }
 
@@ -282,7 +342,7 @@ void QSSQ_CheckEnvImpl::hKillerLZ(JNIEnv *env) {
     jobject packageManager = env->GetStaticObjectField(activityThreadClass, packageManagerField);
     env->DeleteLocalRef(activityThreadClass);
     if (packageManager == NULL) {
-        LOGE("P null");
+        //LOGE("P null");
         //printf("not found packageManager ");
         return;
     }
@@ -293,7 +353,7 @@ void QSSQ_CheckEnvImpl::hKillerLZ(JNIEnv *env) {
     //printf("是否相等  %d: ", strcmp(str.c_str(), "android.content.pm") == 0);
     //printf("寻找位置 %zd: ", str.find("android.content.pm"));
     /* if (str.find("Proxy") != std::string::npos) {//android.content.pm.IPackageManager$Stub$Proxy
-         LOGE("px_ %s",str.c_str());
+         //LOGE("px_ %s",str.c_str());
          //biaoshi找到了。代理类破解。
          exit(0);
      }*/
@@ -302,15 +362,16 @@ void QSSQ_CheckEnvImpl::hKillerLZ(JNIEnv *env) {
         str.find("qssq666") == std::string::npos &&
         str.find("android.content.pm.IPackageManager") != 0
         && str.find("android.content.pm.IPackageManager$Stub$Proxy") != 0
+
         && str.find("com.mi") != 0) {
-        LOGE("x_r");
+        //LOGE("x_r");
         exit(0);
         abort();
     } else {
-        LOGE("v_v");
+        //LOGE("v_v");
     }
     /*
-     * jni内存泄漏规范 https://blog.csdn.net/ccm_oliver/article/details/12781319
+     * jni内存泄漏规范 https://b//LOG.csdn.net/ccm_oliver/article/details/12781319
      */
 
 }

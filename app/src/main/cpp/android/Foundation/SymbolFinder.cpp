@@ -6,7 +6,7 @@
 #include <sys/mman.h>
 #include <cstring>
 #include "SymbolFinder.h"
-#include "ALog.h"
+#include "AMyLog.h"
 
 /* memory map for libraries */
 #define MAX_NAME_LEN 256

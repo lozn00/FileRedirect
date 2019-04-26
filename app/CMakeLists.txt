@@ -28,6 +28,8 @@ add_library( # Sets the name of the library.
         src/main/cpp/android/Foundation/SymbolFinder.cpp
         src/main/cpp/android/Foundation/JniHelper.cpp
         src/main/cpp/QSSQ_hkkq.cpp
+        src/main/cpp/base64.c
+        src/main/cpp/bytesencrypt.cpp
         )
 
 find_library( # Sets the name of the path variable.
@@ -49,5 +51,10 @@ target_link_libraries( # Specifies the target library.
         ${log-lib})
 
 
-add_definitions(-std=c++11)
+#add_definitions(-std=c++11)
 ENABLE_LANGUAGE(ASM)
+
+if (FUCKDEBUG)
+    message("---------open log FUCKDEBUG---------------")
+    add_definitions(-DFUCKDEBUG)
+endif ()

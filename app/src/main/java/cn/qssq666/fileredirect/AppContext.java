@@ -145,7 +145,7 @@ public class AppContext extends Application {
         if (stra.equals(strb)) {
             Log.w(TAG, "伪造成功!，内容都是:" + stra);
         } else {
-            Log.w(TAG, "伪造失败!，a内容都是:" + stra + ",b内容是:" + strb);
+            Log.e(TAG, "伪造失败!，a内容都是:" + stra + ",b内容是:" + strb);
 
         }
         Log.w(TAG, "b文件 禁止访问后:" + s);

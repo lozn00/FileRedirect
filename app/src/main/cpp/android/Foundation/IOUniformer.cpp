@@ -12,7 +12,7 @@
 #include "SandboxFs.h"
 #include "Path.h"
 #include "SymbolFinder.h"
-#include "ALog.h"
+#include "AMyLog.h"
 #include <syscall.h>
 
 #ifndef __NR_link
@@ -755,13 +755,13 @@ void hook_dlopen(int api_level) {
         if (findSymbol("__dl__Z9do_dlopenPKciPK17android_dlextinfoPv", "linker",
                        (unsigned long *) &symbol) == 0) {
             ZzReplace(symbol, (void *) new_do_dlopen_V24,
-                                (void **) &orig_do_dlopen_V24);
+                      (void **) &orig_do_dlopen_V24);
         }
     } else if (api_level >= 19) {
         if (findSymbol("__dl__Z9do_dlopenPKciPK17android_dlextinfo", "linker",
                        (unsigned long *) &symbol) == 0) {
             ZzReplace(symbol, (void *) new_do_dlopen_V19,
-                                (void **) &orig_do_dlopen_V19);
+                      (void **) &orig_do_dlopen_V19);
         }
     } else {
         if (findSymbol("__dl_dlopen", "linker",
@@ -776,59 +776,83 @@ void IOUniformer::startUniformer(const char *so_path, int api_level, int preview
     char api_level_chars[5];
     setenv("V_SO_PATH", so_path, 1);
     sprintf(api_level_chars, "%i", api_level);
+
     setenv("V_API_LEVEL", api_level_chars, 1);
     sprintf(api_level_chars, "%i", preview_api_level);
     setenv("V_PREVIEW_API_LEVEL", api_level_chars, 1);
 
     void *handle = dlopen("libc.so", RTLD_NOW);
+    char prop_value[PROP_VALUE_MAX];
+    char prop_value_brand[PROP_VALUE_MAX];
+    char prop_value_cpu[PROP_VALUE_MAX];
+    //ro.product.brand]
     if (handle) {
-        try {
-            bool regiseterFaccessat = true;
-            char prop_value[PROP_VALUE_MAX];
-            __system_property_get("ro.build.version.sdk", prop_value);
-            int api = atoi(prop_value);
-            //
-            if (api == 23) {
-                memset(prop_value, 0, sizeof(prop_value));
-                __system_property_get("ro.product.model", prop_value);
-                if (strcmp(prop_value, "Redmi 4A") == 0) {
-                    regiseterFaccessat = false;
-                    LOGW("IGNORE_REGISTER_FUNC");
-                }
-
+        bool regiseterFaccessat = true;
+        bool registerfstatat64 = true;
+        //ro.vendor.product.cpu.abilist]
+        //SM-
+        __system_property_get("ro.build.version.sdk", prop_value);
+        __system_property_get("ro.product.brand", prop_value_brand);
+        __system_property_get("ro.vendor.product.cpu.abilist", prop_value_cpu);
+        int api = atoi(prop_value);
+        //
+        if (api == 23) {
+            memset(prop_value, 0, sizeof(prop_value));
+            __system_property_get("ro.product.model", prop_value);
+            if (strcmp(prop_value, "Redmi 4A") == 0) {
+                regiseterFaccessat = false;
+                LOGW("IGNORE_REGISTER_FUNC");
             }
-            if (regiseterFaccessat) {
-                HOOK_SYMBOL(handle, faccessat);
-
-            }
-
-        } catch (...) {
-            LOGW("FACESSAT_INJECT ERROR");
         }
 
+        if (strcmp(prop_value_brand, "samsung") == 0) {
+            std::string string_cpu = prop_value_cpu;
+            if (string_cpu.find("arm64") >= 0) {
+                LOGW("SANXING ARM64 PHONE");
+                registerfstatat64 = false;
+            }
+        }
+
+        if (regiseterFaccessat) {
+            LOGW("faccessat");
+            HOOK_SYMBOL(handle, faccessat);
+
+        }
+
+        LOGW("__openat");
         HOOK_SYMBOL(handle, __openat);
         HOOK_SYMBOL(handle, fchmodat);
         HOOK_SYMBOL(handle, fchownat);
         HOOK_SYMBOL(handle, renameat);
 
-        HOOK_SYMBOL(handle, mkdirat);
-        HOOK_SYMBOL(handle, fstatat64);
-        HOOK_SYMBOL(handle, __statfs);
-        HOOK_SYMBOL(handle, __statfs64);
 
+        LOGW("mkdirat");
+        HOOK_SYMBOL(handle, mkdirat);
+        HOOK_SYMBOL(handle, __statfs);
+        //三星A70闪退?? fstatat64
+//        Cause: seccomp prevented call to disallowed arm64 system call 300
+        if (registerfstatat64) {
+            HOOK_SYMBOL(handle, fstatat64);
+        }
+
+        HOOK_SYMBOL(handle, __statfs64);
+        LOGW("mknodat");
 
         HOOK_SYMBOL(handle, mknodat);
         HOOK_SYMBOL(handle, truncate);
         HOOK_SYMBOL(handle, linkat);
+        LOGW("readlinkat");
         HOOK_SYMBOL(handle, readlinkat);
         HOOK_SYMBOL(handle, unlinkat);
         HOOK_SYMBOL(handle, symlinkat);
         HOOK_SYMBOL(handle, utimensat);
         HOOK_SYMBOL(handle, __getcwd);
 
-
+        LOGW("chdir");
         HOOK_SYMBOL(handle, chdir);
+        LOGW("execve");
         HOOK_SYMBOL(handle, execve);
+        LOGW("execve over");
         if (api_level <= 20) {
             HOOK_SYMBOL(handle, access);
             HOOK_SYMBOL(handle, __open);
@@ -853,5 +877,7 @@ void IOUniformer::startUniformer(const char *so_path, int api_level, int preview
         }
         dlclose(handle);
     }
+    LOGW("dlopen start");
     hook_dlopen(api_level);
+    LOGW(" dlopen over");
 }

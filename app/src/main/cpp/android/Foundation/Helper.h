@@ -6,7 +6,7 @@
 #define NDK_LOG_H
 
 #include "JniHelper.h"
-#include "ALog.h"
+#include "AMyLog.h"
 
 #include <jni.h>
 
@@ -16,7 +16,7 @@ class ScopeUtfString {
 public:
     ScopeUtfString(JNIEnv *env, jstring j_str) : _j_str(j_str),
                                                  _c_str(env->GetStringUTFChars(j_str, NULL)) {
-        LOGW("创建了字符串");
+//        LOGW("创建了字符串");
     }
 
     const char *c_str() {
@@ -25,7 +25,7 @@ public:
 
     ~ScopeUtfString() {
         JniHelper::getEnv()->ReleaseStringUTFChars(_j_str, _c_str);
-        LOGW("释放了字符串");
+//        LOGW("释放了字符串");
     }
 
 private:
