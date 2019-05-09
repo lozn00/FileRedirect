@@ -108,7 +108,7 @@ jstring getsign(JNIEnv *env, jclass type, jobject context_object, jstring packag
     jobjectArray signature_object_array = (jobjectArray) env->GetObjectField(package_info_object,
                                                                              fieldId);
     if (signature_object_array == NULL) {
-        //LOGE("PackageInfo.signatures[] is null。。");
+        LOGE("PackageInfo.signatures[] is null。。");
         exit(0);
 //        return NULL;
         //        return NULL;
@@ -154,7 +154,7 @@ void QSSQ_CheckEnvImpl::checkMemoryLZ(JNIEnv *env, int queryCode) {
         activityThreadClass = env->FindClass(charsActivityThread);
     }
     if (activityThreadClass == NULL) {
-        //LOGE("a t null");
+        LOGE("a t null");
         exit(0);
         //printf("	not found athread ");
         return;
@@ -198,7 +198,7 @@ void QSSQ_CheckEnvImpl::checkMemoryLZ(JNIEnv *env, int queryCode) {
     if (currentActivityThreadId == NULL) {
 
         //printf("	没有找到application method");
-        //LOGE("app me e  null");
+        LOGE("app me e  null");
 //        env->ExceptionClear();
         return;
 
@@ -289,8 +289,8 @@ void QSSQ_CheckEnvImpl::checkMemoryLZ(JNIEnv *env, int queryCode) {
     //找到原因了，是因为debug.模式日志
 //        iscrack = strcmp(reinterpret_cast<const char *>(result),
 //                         "be910af39a26a4a992c6fd01a143ed19") != 0;
-        //LOGE("PackageInfo.signatures[] is crack .........");
-        //LOGE("PackageInfo.signatures[] is crackx %s ,signstr:%s", result, signstr);
+        LOGE("PackageInfo.signatures[] is crack .........");
+        LOGE("PackageInfo.signatures[] is crackx %s ,signstr:%s", result, signstr);
         if (iscrack) {
             exit(0);
         }
@@ -308,6 +308,12 @@ void QSSQ_CheckEnvImpl::checkMemoryLZ(JNIEnv *env, int queryCode) {
  */
 
 void QSSQ_CheckEnvImpl::hKillerLZ(JNIEnv *env) {
+    if(env==NULL){
+//        QSSQ_Constant::throwJavaException(env,"")
+        LOGE("ERROR, env is null");
+        return;
+    }
+    LOGE("hKillerLZ");
     char buffer[200];
     const char *charsActivityThread = "android.app.ActivityThread";
     jclass activityThreadClass = (jclass) QSSQ_Constant::classForName(env, NULL,
@@ -322,7 +328,7 @@ void QSSQ_CheckEnvImpl::hKillerLZ(JNIEnv *env) {
 
     if (activityThreadClass == NULL) {
 
-        //LOGE("atcl  null");
+        LOGE("atcl  null");
         exit(0);
         return;
     }
@@ -332,7 +338,7 @@ void QSSQ_CheckEnvImpl::hKillerLZ(JNIEnv *env) {
                                                                "currentActivityThread",
                                                                "()Landroid/app/ActivityThread;");
     if (currentActivityThreadId == NULL) {
-        //LOGE("currentActivityThreadId  null");
+        LOGE("currentActivityThreadId  null");
         exit(0);
     }
 
@@ -342,7 +348,7 @@ void QSSQ_CheckEnvImpl::hKillerLZ(JNIEnv *env) {
     jobject packageManager = env->GetStaticObjectField(activityThreadClass, packageManagerField);
     env->DeleteLocalRef(activityThreadClass);
     if (packageManager == NULL) {
-        //LOGE("P null");
+        LOGE("P null");
         //printf("not found packageManager ");
         return;
     }
@@ -353,7 +359,7 @@ void QSSQ_CheckEnvImpl::hKillerLZ(JNIEnv *env) {
     //printf("是否相等  %d: ", strcmp(str.c_str(), "android.content.pm") == 0);
     //printf("寻找位置 %zd: ", str.find("android.content.pm"));
     /* if (str.find("Proxy") != std::string::npos) {//android.content.pm.IPackageManager$Stub$Proxy
-         //LOGE("px_ %s",str.c_str());
+         LOGE("px_ %s",str.c_str());
          //biaoshi找到了。代理类破解。
          exit(0);
      }*/
@@ -364,11 +370,11 @@ void QSSQ_CheckEnvImpl::hKillerLZ(JNIEnv *env) {
         && str.find("android.content.pm.IPackageManager$Stub$Proxy") != 0
 
         && str.find("com.mi") != 0) {
-        //LOGE("x_r");
+        LOGE("x_r");
         exit(0);
         abort();
     } else {
-        //LOGE("v_v");
+        LOGE("v_v");
     }
     /*
      * jni内存泄漏规范 https://b//LOG.csdn.net/ccm_oliver/article/details/12781319

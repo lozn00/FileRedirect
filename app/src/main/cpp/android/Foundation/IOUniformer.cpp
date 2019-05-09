@@ -233,6 +233,43 @@ HOOK_DEF(int, fchmodat, int dirfd, const char *pathname, mode_t mode, int flags)
     FREE(redirect_path, pathname);
     return ret;
 }
+
+int (*old_faccessat)(int __dirfd, const char *__path, int __mode, int __flags);
+
+int new_faccessat1(int __dirfd, const char *pathname, int __mode, int __flags) {
+    LOGW("new_faccessat1", pathname, __mode);
+    int res;
+    const char *redirect_path = relocate_path(pathname, &res);
+//    int ret = syscall(__NR_faccessat, dirfd, redirect_path, __mode, __flags);
+//    return ret;
+    int ret = old_faccessat(__dirfd, redirect_path, __mode, __flags);
+    FREE(redirect_path, pathname);
+    return ret;
+}
+
+int (*old_fstatat64)(int __dir_fd, const char* __path, struct stat64* __buf, int __flags);
+
+int new_fstatat64_(int __dir_fd, const char *__path, struct stat64 *__buf, int __flags){
+  /*  int res;
+    LOGE("fstatat64 exec ");
+    const char *redirect_path = relocate_path(pathname, &res);
+    int ret = syscall(__NR_fstatat64, dirfd, redirect_path, buf, flags);
+    FREE(redirect_path, pathname);*/
+
+
+    int res;
+    const char *redirect_path = relocate_path(__path, &res);
+    LOGW("new_fstatat64_ redirect_path path: %s ",redirect_path);
+    int ret = old_fstatat64(__dir_fd, redirect_path, __buf, __flags);
+//    FREE(redirect_path, __path);
+    return ret;
+}
+
+
+
+
+
+
 // int fchmod(const char *pathname, mode_t mode);
 HOOK_DEF(int, fchmod, const char *pathname, mode_t mode) {
     int res;
@@ -248,6 +285,7 @@ HOOK_DEF(int, fchmod, const char *pathname, mode_t mode) {
 HOOK_DEF(int, fstatat, int dirfd, const char *pathname, struct stat *buf, int flags) {
     int res;
     const char *redirect_path = relocate_path(pathname, &res);
+    LOGE("fstatat exec ");
     int ret = syscall(__NR_fstatat64, dirfd, redirect_path, buf, flags);
     FREE(redirect_path, pathname);
     return ret;
@@ -256,6 +294,7 @@ HOOK_DEF(int, fstatat, int dirfd, const char *pathname, struct stat *buf, int fl
 // int fstatat64(int dirfd, const char *pathname, struct stat *buf, int flags);
 HOOK_DEF(int, fstatat64, int dirfd, const char *pathname, struct stat *buf, int flags) {
     int res;
+    LOGE("fstatat64 exec ");
     const char *redirect_path = relocate_path(pathname, &res);
     int ret = syscall(__NR_fstatat64, dirfd, redirect_path, buf, flags);
     FREE(redirect_path, pathname);
@@ -786,9 +825,9 @@ void IOUniformer::startUniformer(const char *so_path, int api_level, int preview
     char prop_value_brand[PROP_VALUE_MAX];
     char prop_value_cpu[PROP_VALUE_MAX];
     //ro.product.brand]
+    bool regiseterFaccessat = true;
+    bool registerfstatat64 = true;
     if (handle) {
-        bool regiseterFaccessat = true;
-        bool registerfstatat64 = true;
         //ro.vendor.product.cpu.abilist]
         //SM-
         __system_property_get("ro.build.version.sdk", prop_value);
@@ -814,9 +853,12 @@ void IOUniformer::startUniformer(const char *so_path, int api_level, int preview
         }
 
         if (regiseterFaccessat) {
-            LOGW("faccessat");
-            HOOK_SYMBOL(handle, faccessat);
+            LOGW("faccessat_old");
 
+            HOOK_SYMBOL(handle, faccessat);
+        } else {
+            hook_function(handle, "faccessat", (void *) new_faccessat1, (void **) &old_faccessat);
+            LOGW("faccessat_ hook succ");
         }
 
         LOGW("__openat");
@@ -831,9 +873,13 @@ void IOUniformer::startUniformer(const char *so_path, int api_level, int preview
         HOOK_SYMBOL(handle, __statfs);
         //三星A70闪退?? fstatat64
 //        Cause: seccomp prevented call to disallowed arm64 system call 300
-        if (registerfstatat64) {
-            HOOK_SYMBOL(handle, fstatat64);
-        }
+         HOOK_SYMBOL(handle, fstatat64);
+//        if (registerfstatat64) {
+//        } else {
+            LOGW(" HOOK fstatat64");
+//        hook_function(handle, "fstatat64", (void *) new_fstatat64_, (void **) &old_fstatat64);
+
+//        }
 
         HOOK_SYMBOL(handle, __statfs64);
         LOGW("mknodat");
@@ -877,7 +923,10 @@ void IOUniformer::startUniformer(const char *so_path, int api_level, int preview
         }
         dlclose(handle);
     }
-    LOGW("dlopen start");
-    hook_dlopen(api_level);
-    LOGW(" dlopen over");
+/*
+    if (registerfstatat64) {
+        LOGW("dlopen start");
+        hook_dlopen(api_level);
+        LOGW(" dlopen over");
+    }*/
 }
