@@ -92,8 +92,8 @@ public class QSSQHook {
        /*     if (!new File(soPath).exists()) {
                 throw new RuntimeException("Unable to find the so ." + soPath);
             }*/
-            redirectDirectory(VESCAPE, "/");
             nativeEnableIORedirect(soPath, Build.VERSION.SDK_INT, getPreviewSDKInt());
+//            redirectDirectory(VESCAPE, "/");
         } catch (Throwable e) {
             Log.e(TAG, "enableIORedirect", e);
         }

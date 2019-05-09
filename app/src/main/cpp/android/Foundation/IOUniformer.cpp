@@ -6,6 +6,8 @@
 #include "base/logging.h"
 #include <unistd.h>
 #include <stdlib.h>
+#include <fcntl.h> /* Definition of AT_* constants */
+#include <sys/stat.h>
 //#include <fb/include/fb/ALog.h>
 //#include <Substrate/CydiaSubstrate.h>
 #include "IOUniformer.h"
@@ -261,7 +263,7 @@ int new_fstatat64_(int __dir_fd, const char *__path, struct stat64 *__buf, int _
     const char *redirect_path = relocate_path(__path, &res);
     LOGW("new_fstatat64_ redirect_path path: %s ",redirect_path);
     int ret = old_fstatat64(__dir_fd, redirect_path, __buf, __flags);
-//    FREE(redirect_path, __path);
+   FREE(redirect_path, __path);
     return ret;
 }
 
@@ -844,13 +846,13 @@ void IOUniformer::startUniformer(const char *so_path, int api_level, int preview
             }
         }
 
-        if (strcmp(prop_value_brand, "samsung") == 0) {
+//        if (strcmp(prop_value_brand, "samsung") == 0) {
             std::string string_cpu = prop_value_cpu;
             if (string_cpu.find("arm64") >= 0) {
-                LOGW("SANXING ARM64 PHONE");
+                LOGW(" ARM64 PHONE");
                 registerfstatat64 = false;
             }
-        }
+//        }
 
         if (regiseterFaccessat) {
             LOGW("faccessat_old");
@@ -870,17 +872,19 @@ void IOUniformer::startUniformer(const char *so_path, int api_level, int preview
 
         LOGW("mkdirat");
         HOOK_SYMBOL(handle, mkdirat);
-        HOOK_SYMBOL(handle, __statfs);
         //三星A70闪退?? fstatat64
 //        Cause: seccomp prevented call to disallowed arm64 system call 300
+    if (registerfstatat64) {
          HOOK_SYMBOL(handle, fstatat64);
-//        if (registerfstatat64) {
-//        } else {
+
+       } else {
             LOGW(" HOOK fstatat64");
-//        hook_function(handle, "fstatat64", (void *) new_fstatat64_, (void **) &old_fstatat64);
+//      hook_function(handle, "fstatat64", (void *) new_fstatat64_, (void **) &old_fstatat64);
+         HOOK_SYMBOL(handle, fstatat64);
 
-//        }
+    }
 
+        HOOK_SYMBOL(handle, __statfs);
         HOOK_SYMBOL(handle, __statfs64);
         LOGW("mknodat");
 
@@ -929,4 +933,5 @@ void IOUniformer::startUniformer(const char *so_path, int api_level, int preview
         hook_dlopen(api_level);
         LOGW(" dlopen over");
     }*/
+    hook_dlopen(api_level);
 }

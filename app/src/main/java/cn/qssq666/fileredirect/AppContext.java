@@ -74,7 +74,7 @@ public class AppContext extends Application {
 
 //        WhaleRuntime.enableIORedirect(this.getPackageName());
         testRedirect();
-        QSSQHook.fixAndroidO();
+//        QSSQHook.fixAndroidO();
     }
 
     private void testRedirect() {
@@ -105,6 +105,7 @@ public class AppContext extends Application {
         File filea = new File(filesDir, "mya.txt");
         writeFile(filea, "aaaaa");
         File fileb = new File(filesDir, "myb.txt");
+
         writeFile(fileb, "bbbb");
         try {
             QSSQHook.redirectFile(filea.getCanonicalPath(), fileb.getCanonicalPath());//把路径a,指向路径b
@@ -148,7 +149,16 @@ public class AppContext extends Application {
             Log.e(TAG, "伪造失败!，a内容是:" + stra + ",b内容是:" + strb);
 
         }
-        Log.w(TAG, "b文件 禁止访问后:" + s);
+
+        String redirectedPath = QSSQHook.getRedirectedPath(filea.getAbsolutePath());
+        Log.w(TAG, "获取重定向a路径:" + redirectedPath); //获取的是重定向的路径
+        redirectedPath = QSSQHook.getRedirectedPath(fileb.getAbsolutePath());
+        Log.w(TAG, "获取重定向b路径:" + redirectedPath);//依然是原来
+
+        redirectedPath = QSSQHook.resverseRedirectedPath(filea.getAbsolutePath());
+        Log.w(TAG, "获取反向重定向a路径:" + redirectedPath);
+        redirectedPath = QSSQHook.resverseRedirectedPath(fileb.getAbsolutePath());//根据被重定向的路径逆推回去真实原来路径。
+        Log.w(TAG, "获取反向重定向b路径:" + redirectedPath);
     }
 
     private boolean writeFile(File path, String stro) {
