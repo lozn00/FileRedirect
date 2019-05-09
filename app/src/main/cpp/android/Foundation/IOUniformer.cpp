@@ -879,8 +879,8 @@ void IOUniformer::startUniformer(const char *so_path, int api_level, int preview
 
        } else {
             LOGW(" HOOK fstatat64");
-//      hook_function(handle, "fstatat64", (void *) new_fstatat64_, (void **) &old_fstatat64);
-         HOOK_SYMBOL(handle, fstatat64);
+    hook_function(handle, "fstatat64", (void *) new_fstatat64_, (void **) &old_fstatat64);
+//         HOOK_SYMBOL(handle, fstatat64);
 
     }
 
@@ -927,11 +927,10 @@ void IOUniformer::startUniformer(const char *so_path, int api_level, int preview
         }
         dlclose(handle);
     }
-/*
+
     if (registerfstatat64) {
         LOGW("dlopen start");
         hook_dlopen(api_level);
         LOGW(" dlopen over");
-    }*/
-    hook_dlopen(api_level);
+    }
 }
