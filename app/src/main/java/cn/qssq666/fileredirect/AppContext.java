@@ -73,7 +73,6 @@ public class AppContext extends Application {
 
 //        WhaleRuntime.fixAndroidO();
 
-
         testRedirect();
 //        QSSQHook.fixAndroidO();
     }
