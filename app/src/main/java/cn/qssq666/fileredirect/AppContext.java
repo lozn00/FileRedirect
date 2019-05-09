@@ -73,7 +73,7 @@ public class AppContext extends Application {
 
 //        WhaleRuntime.fixAndroidO();
 
-//        WhaleRuntime.enableIORedirect(this.getPackageName());
+
         testRedirect();
 //        QSSQHook.fixAndroidO();
     }
@@ -113,7 +113,6 @@ public class AppContext extends Application {
         } catch (IOException e) {
             Log.e(TAG,"redirectFile fail ",e);
         }
-        QSSQHook.enableIORedirect(this.getPackageName());//这句话放到之后才好？？先执行重定向换成然后执行这句话才是官方得姿势。
 
         String stra = "aa";
         String strb = "bb";
@@ -154,7 +153,7 @@ public class AppContext extends Application {
         Log.w(TAG, "获取反向重定向b路径:" + redirectedPath);
     }
 
-    private boolean writeFile(File path, String stro) {
+    public static boolean writeFile(File path, String stro) {
         try {
             FileWriter fileWriter = new FileWriter(path);
             BufferedWriter bufferedReader = new BufferedWriter(fileWriter);
@@ -173,7 +172,7 @@ public class AppContext extends Application {
 
     }
 
-    private String readFile(String path) {
+    public static String readFile(String path) {
         try {
             FileReader in = new FileReader(path);
             BufferedReader bufferedReader = new BufferedReader(in);

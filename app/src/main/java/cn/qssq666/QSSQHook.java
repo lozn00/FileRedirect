@@ -1,5 +1,8 @@
 package cn.qssq666;
 
+import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.util.Log;
 
@@ -87,11 +90,27 @@ public class QSSQHook {
     }
 
     public static void enableIORedirect(String packageName) {
+        String soPath = String.format("/data/data/%s/lib/libqssqredirect.so", packageName);
+        enableIORedirect(soPath);
+    }
+
+    public static void enableIORedirect(Context context, String packageName) {
+        String soPath = String.format("/data/data/%s/lib/libqssqredirect.so", packageName);
         try {
-            String soPath = String.format("/data/data/%s/lib/libqssqredirect.so", packageName);
-           /* if (!new File(soPath).exists()) {
+            PackageInfo packageInfo = context.getPackageManager().getPackageInfo(packageName, PackageManager.GET_UNINSTALLED_PACKAGES);
+            soPath = packageInfo.applicationInfo.nativeLibraryDir + "/libqssqredirect.so";
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        enableIORedirect(soPath, packageName);
+    }
+
+    public static void enableIORedirect(String soPath, String packageName) {
+        try {
+
+            if (!new File(soPath).exists()) {
                 throw new RuntimeException("Unable to find the so ." + soPath);
-            }*/
+            }
             nativeEnableIORedirect(soPath, Build.VERSION.SDK_INT, getPreviewSDKInt());
             redirectDirectory(VESCAPE, "/");
         } catch (Throwable e) {
