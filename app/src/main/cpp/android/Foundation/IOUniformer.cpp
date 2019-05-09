@@ -845,14 +845,11 @@ void IOUniformer::startUniformer(const char *so_path, int api_level, int preview
                 LOGW("IGNORE_REGISTER_FUNC");
             }
         }
-
-//        if (strcmp(prop_value_brand, "samsung") == 0) {
             std::string string_cpu = prop_value_cpu;
             if (string_cpu.find("arm64") >= 0) {
                 LOGW(" ARM64 PHONE");
                 registerfstatat64 = false;
             }
-//        }
 
         if (regiseterFaccessat) {
             LOGW("faccessat_old");
@@ -880,7 +877,6 @@ void IOUniformer::startUniformer(const char *so_path, int api_level, int preview
        } else {
             LOGW(" HOOK fstatat64");
     hook_function(handle, "fstatat64", (void *) new_fstatat64_, (void **) &old_fstatat64);
-//         HOOK_SYMBOL(handle, fstatat64);
 
     }
 
@@ -919,18 +915,13 @@ void IOUniformer::startUniformer(const char *so_path, int api_level, int preview
             HOOK_SYMBOL(handle, unlink);
             HOOK_SYMBOL(handle, readlink);
             HOOK_SYMBOL(handle, symlink);
-
-//        HOOK_SYMBOL(handle, __getdents64);
-
-//            HOOK_SYMBOL(handle, getdents);
-//            HOOK_SYMBOL(handle, execv);
         }
         dlclose(handle);
     }
-
-    if (registerfstatat64) {
-        LOGW("dlopen start");
         hook_dlopen(api_level);
-        LOGW(" dlopen over");
-    }
+//
+//    if (registerfstatat64) {
+//        LOGW("dlopen start");
+//        LOGW(" dlopen over");
+//    }
 }
