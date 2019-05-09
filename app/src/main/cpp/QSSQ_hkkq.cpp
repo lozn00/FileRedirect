@@ -194,6 +194,12 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
 
 }
 
+
+extern "C" __attribute__((constructor)) void _init(void) {
+    LOGW("init_env_before_all");
+    IOUniformer::init_env_before_all();
+}
+
 /*
 
 通过 new int[]指定具体数组 获取修改参数加上const 修复字符串的问题，而重复定义则通过把所有  全局改成单文件可访问的，避免被包含后导致冲突。重复

@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Random;
 
 import cn.qssq666.QSSQHook;
 
@@ -78,7 +79,7 @@ public class AppContext extends Application {
     }
 
     private void testRedirect() {
-        QSSQHook.enableIORedirect(this.getPackageName());//这句话放到之后才好？？先执行重定向换成然后执行这句话才是官方得姿势。
+
      /*   Log.w(TAG, "onCreate CALL");
         String s;
         s = readFile(filea);
@@ -103,20 +104,17 @@ public class AppContext extends Application {
         File filesDir = this.getFilesDir();
         Log.w(TAG, "FILESDIR" + filesDir + ",");
         File filea = new File(filesDir, "mya.txt");
-        writeFile(filea, "aaaaa");
+        writeFile(filea, "aaaaa"+new Random().nextInt());
         File fileb = new File(filesDir, "myb.txt");
 
-        writeFile(fileb, "bbbb");
+        writeFile(fileb, "bbbb"+new Random().nextInt());
         try {
             QSSQHook.redirectFile(filea.getCanonicalPath(), fileb.getCanonicalPath());//把路径a,指向路径b
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG,"redirectFile fail ",e);
         }
-        try {
-            Thread.sleep(1500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        QSSQHook.enableIORedirect(this.getPackageName());//这句话放到之后才好？？先执行重定向换成然后执行这句话才是官方得姿势。
+
         String stra = "aa";
         String strb = "bb";
         try {
@@ -138,11 +136,6 @@ public class AppContext extends Application {
         } catch (IOException e) {
             e.printStackTrace();
         }*/
-        try {
-            s = readFile(fileb.getCanonicalPath());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         if (stra.equals(strb)) {
             Log.w(TAG, "伪造成功!，内容都是:" + stra);
         } else {

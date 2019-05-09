@@ -89,11 +89,11 @@ public class QSSQHook {
     public static void enableIORedirect(String packageName) {
         try {
             String soPath = String.format("/data/data/%s/lib/libqssqredirect.so", packageName);
-       /*     if (!new File(soPath).exists()) {
+           /* if (!new File(soPath).exists()) {
                 throw new RuntimeException("Unable to find the so ." + soPath);
             }*/
             nativeEnableIORedirect(soPath, Build.VERSION.SDK_INT, getPreviewSDKInt());
-//            redirectDirectory(VESCAPE, "/");
+            redirectDirectory(VESCAPE, "/");
         } catch (Throwable e) {
             Log.e(TAG, "enableIORedirect", e);
         }
@@ -126,6 +126,7 @@ public class QSSQHook {
     private static native void nativeIOForbid(String path);
 
     private static native void nativeEnableIORedirect(String selfSoPath, int apiLevel, int previewApiLevel);
+
     public static native void fixAndroidO();
 
 

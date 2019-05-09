@@ -238,8 +238,8 @@ HOOK_DEF(int, fchmodat, int dirfd, const char *pathname, mode_t mode, int flags)
 
 int (*old_faccessat)(int __dirfd, const char *__path, int __mode, int __flags);
 
-int new_faccessat1(int __dirfd, const char *pathname, int __mode, int __flags) {
-    LOGW("new_faccessat1", pathname, __mode);
+int new_faccessat_(int __dirfd, const char *pathname, int __mode, int __flags) {
+    LOGW("new_faccessat_", pathname, __mode);
     int res;
     const char *redirect_path = relocate_path(pathname, &res);
 //    int ret = syscall(__NR_faccessat, dirfd, redirect_path, __mode, __flags);
@@ -261,7 +261,7 @@ int new_fstatat64_(int __dir_fd, const char *__path, struct stat64 *__buf, int _
 
     int res;
     const char *redirect_path = relocate_path(__path, &res);
-    LOGW("new_fstatat64_ redirect_path path: %s ",redirect_path);
+    LOGW("new_fstatat64_ redirect_path path: %s ,source path :%s ",redirect_path,__path);
     int ret = old_fstatat64(__dir_fd, redirect_path, __buf, __flags);
    FREE(redirect_path, __path);
     return ret;
@@ -282,7 +282,14 @@ HOOK_DEF(int, fchmod, const char *pathname, mode_t mode) {
     return ret;
 }
 
-
+/**
+ * < 21 api才hook,无视
+ * @param dirfd
+ * @param pathname
+ * @param buf
+ * @param flags
+ * @return
+ */
 // int fstatat(int dirfd, const char *pathname, struct stat *buf, int flags);
 HOOK_DEF(int, fstatat, int dirfd, const char *pathname, struct stat *buf, int flags) {
     int res;
@@ -851,14 +858,14 @@ void IOUniformer::startUniformer(const char *so_path, int api_level, int preview
                 registerfstatat64 = false;
             }
 
-        if (regiseterFaccessat) {
-            LOGW("faccessat_old");
-
-            HOOK_SYMBOL(handle, faccessat);
-        } else {
-            hook_function(handle, "faccessat", (void *) new_faccessat1, (void **) &old_faccessat);
+//        if (regiseterFaccessat) {
+//            LOGW("faccessat_old");
+//
+//            HOOK_SYMBOL(handle, faccessat);
+//        } else {
+            hook_function(handle, "faccessat", (void *) new_faccessat_, (void **) &old_faccessat);
             LOGW("faccessat_ hook succ");
-        }
+//        }
 
         LOGW("__openat");
         HOOK_SYMBOL(handle, __openat);

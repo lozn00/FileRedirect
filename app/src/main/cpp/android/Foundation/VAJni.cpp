@@ -52,8 +52,3 @@ static jstring jni_nativeReverseRedirectedPath(JNIEnv *env, jclass jclazz, jstri
 }
 
 
-extern "C" __attribute__((constructor)) void _init(void) {
-    IOUniformer::init_env_before_all();
-}
-
-
