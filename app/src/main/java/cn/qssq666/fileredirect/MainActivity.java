@@ -76,6 +76,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         StringBuffer sb=new StringBuffer();
+      sb.append("型号:" + Build.PRODUCT+"\n");
+      sb.append("SDk:" + Build.VERSION.SDK_INT+"\n");
         String stra = "aa";
         String strb = "bb";
         try {
@@ -84,8 +86,6 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-      sb.append("型号:" + Build.PRODUCT+"\n");
-      sb.append("SDk:" + Build.VERSION.SDK_INT+"\n");
       sb.append("重定向后读取的内容/data/data_a:" + s+"");
         sb.append("\n");
         try {

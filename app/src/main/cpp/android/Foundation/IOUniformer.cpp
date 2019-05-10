@@ -878,14 +878,14 @@ void IOUniformer::startUniformer(const char *so_path, int api_level, int preview
         HOOK_SYMBOL(handle, mkdirat);
         //三星A70闪退?? fstatat64
 //        Cause: seccomp prevented call to disallowed arm64 system call 300
-    if (registerfstatat64) {
-         HOOK_SYMBOL(handle, fstatat64);
-
-       } else {
+//    if (registerfstatat64) {
+//         HOOK_SYMBOL(handle, fstatat64);
+//
+//       } else {
             LOGW(" HOOK fstatat64");
     hook_function(handle, "fstatat64", (void *) new_fstatat64_, (void **) &old_fstatat64);
 
-    }
+//    }
 
         HOOK_SYMBOL(handle, __statfs);
         HOOK_SYMBOL(handle, __statfs64);

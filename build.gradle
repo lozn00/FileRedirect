@@ -21,7 +21,9 @@ allprojects {
         
     }
 }
-
+ext{
+    USE_CMAKE=false
+}
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
