@@ -4,6 +4,7 @@
 #include<stdio.h>
 #include<iostream>
 #include<string.h>
+#include "fb/Environment.h"
 
 //#include"QSSQ_Constant.cpp"
 #include <utility>
@@ -175,6 +176,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
     if (vm->GetEnv((void **) &env, JNI_VERSION_1_6) != JNI_OK) {
         return JNI_ERR;
     }
+       facebook::jni::Environment::initialize(vm);
     JniHelper::setJavaVM(vm);
     assert(env != NULL);
     if (!registerNatives(env)) {//注册

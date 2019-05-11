@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         }
-        QSSQHook.enableIORedirect(this,this.getPackageName());
+        QSSQHook.enableIORedirect(this, this.getPackageName());
         testRedirect();
     }
 
@@ -75,9 +75,9 @@ public class MainActivity extends AppCompatActivity {
             Log.e(TAG, "redirectFile fail ", e);
         }
 
-        StringBuffer sb=new StringBuffer();
-      sb.append("型号:" + Build.PRODUCT+"\n");
-      sb.append("SDk:" + Build.VERSION.SDK_INT+"\n");
+        StringBuffer sb = new StringBuffer();
+        sb.append("型号:" + Build.PRODUCT + "\n");
+        sb.append("SDk:" + Build.VERSION.SDK_INT + "\n");
         String stra = "aa";
         String strb = "bb";
         try {
@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-      sb.append("重定向后读取的内容/data/data_a:" + s+"");
+        sb.append("重定向后读取的内容/data/data_a:" + s + "");
         sb.append("\n");
         try {
             s = AppContext.readFile(fileb.getCanonicalPath());
@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-     sb.append("重定向后读取的内容/data/data_b:" + s);
+        sb.append("重定向后读取的内容/data/data_b:" + s);
       /*  try {
             WhaleRuntime.forbid(fileb.getCanonicalPath());
         } catch (IOException e) {
@@ -103,14 +103,14 @@ public class MainActivity extends AppCompatActivity {
         String result = "";
         if (stra.equals(strb)) {
             result = "伪造成功!，内容都是:" + stra;
-        tv.setTextColor(Color.GREEN);
+            tv.setTextColor(Color.GREEN);
         } else {
             result = "伪造失败!，a内容是:" + stra + ",b内容是:" + strb;
-        tv.setText(result);
-        tv.setTextColor(Color.RED);
+            tv.setTextColor(Color.RED);
 
         }
-        Log.w(TAG, ""+result);
+        tv.setText(result);
+        Log.w(TAG, "" + result);
 
 
         String redirectedPath = QSSQHook.getRedirectedPath(filea.getAbsolutePath());
@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
         sb.append("\n获取反向重定向a路径:" + redirectedPath);
         redirectedPath = QSSQHook.resverseRedirectedPath(fileb.getAbsolutePath());//根据被重定向的路径逆推回去真实原来路径。
         sb.append("\n获取反向重定向b路径:" + redirectedPath);
-tv2.setText(sb.toString());
+        tv2.setText(sb.toString());
     }
 
     @Override

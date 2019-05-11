@@ -9,13 +9,16 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        externalNativeBuild {
-            cmake {
+        if (COMPILE_JNI) {
+            externalNativeBuild {
+                cmake {
 //            arguments '-DBUILD_TESTING=OFF', '-DANDROID_TOOLCHAIN=gcc'
-                arguments "-DANDROID_STL=c++_shared", "-DSHARED=false","-DDEBUG=OFF","-DFUCKDEBUG=ON","-Wno-error=format-security"//打开hook zz日志。
+                    arguments "-DANDROID_STL=c++_shared", "-DSHARED=false", "-DDEBUG=OFF", "-DFUCKDEBUG=ON", "-Wno-error=format-security"
+//打开hook zz日志。
 //解决roid.injected.build.abi'gradle标志设置的ABIs [armeabi-v7a，armeabi]包含的'ARMEABI'不是此项目的目标
-                cppFlags "-fexceptions","-fpermissive","-fno-exceptions"
-                abiFilters 'armeabi-v7a', 'arm64-v8a'
+                    cppFlags "-fexceptions", "-fpermissive", "-fno-exceptions"
+                    abiFilters 'armeabi-v7a'
+                }
             }
         }
     }
@@ -49,6 +52,11 @@ android {
 
         }
     }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['src/main/libs']
+        }
+    }
     buildTypes {
         debug {
             minifyEnabled false
@@ -69,14 +77,20 @@ android {
                 path "CMakeLists.txt"
             }
         } else {
-            ndkBuild {
-                path 'src/main/jni/Android.mk'
+            if (COMPILE_JNI) {
+                ndkBuild {
+                    path 'src/main/jni/Android.mk'
+                }
+
+            } else {
+                ndkBuild {
+                    path 'CMakeListsIgnore.txt'
+                }
             }
 
         }
 
     }
-
 
 
 }

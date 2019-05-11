@@ -16,7 +16,7 @@
 #include "SymbolFinder.h"
 #include "AMyLog.h"
 #include <syscall.h>
-
+/*
 #ifndef __NR_link
 #define __NR_link 9
 #endif
@@ -123,7 +123,7 @@
 #define __NR_stat64 195
 #endif
 
-
+*/
 bool iu_loaded = false;
 
 void IOUniformer::init_env_before_all() {
