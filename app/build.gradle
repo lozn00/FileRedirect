@@ -19,6 +19,9 @@ android {
                     cppFlags "-fexceptions", "-fpermissive", "-fno-exceptions"
                     abiFilters 'armeabi-v7a'
                 }
+                ndkBuild {
+                    abiFilters "armeabi-v7a"
+                }
             }
         }
     }

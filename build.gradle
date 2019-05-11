@@ -23,7 +23,7 @@ allprojects {
 }
 ext{
     USE_CMAKE=false
-    COMPILE_JNI=false
+    COMPILE_JNI=true
 }
 task clean(type: Delete) {
     delete rootProject.buildDir
