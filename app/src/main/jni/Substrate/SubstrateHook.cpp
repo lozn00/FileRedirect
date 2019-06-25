@@ -90,7 +90,7 @@ X 4790  ldr r*,[pc,#*]    */
 #define T1$ldr_rt_$rn_im$(rt, rn, im) /* ldr rt, [rn, #im] */ \
     (0xf850 | ((im < 0 ? 0 : 1) << 7) | (rn))
 #define T2$ldr_rt_$rn_im$(rt, rn, im) /* ldr rt, [rn, #im] */ \
-    (((rt) << 12) | abs(im))
+    (((rt) << 12) | absa(im))
 
 #define T1$mrs_rd_apsr(rd) /* mrs rd, apsr */ \
     (0xf3ef)
@@ -132,6 +132,12 @@ static inline bool T$pcrel$ldr(uint16_t ic) {
     return (ic & 0xf800) == 0x4800;
 }
 
+int absa(int data){
+	return data>0?data:-data;
+}
+float absd(float data){
+	return data>0?data:-data;
+}
 static inline bool T$pcrel$add(uint16_t ic) {
     return (ic & 0xff78) == 0x4478;
 }
@@ -644,7 +650,7 @@ printf("SubstrateHookFunctionARM\n");
             if (guard)
                 buffer[start++] = A$stmdb_sp$_$rs$((1 << copy.rn));
 
-            buffer[start+0] = A$ldr_rd_$rn_im$(copy.rn, A$pc, (end-1 - (start+0)) * 4 - 8);
+          //TODO   buffer[start+0] = A$ldr_rd_$rn_im$(copy.rn, A$pc, (end-1 - (start+0)) * 4 - 8);
             buffer[start+1] = copy.value;
 
             start += 2;
