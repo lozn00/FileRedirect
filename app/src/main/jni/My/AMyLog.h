@@ -12,6 +12,7 @@
     //#ifndef XXXXX
     //#if DEBUG
     //#if defined(DEBUG)
+
     #if defined(FUCKDEBUG)
         #pragma message("-----MY LOG_ ON----")
         #ifdef ANDROID

@@ -2,8 +2,8 @@ LOCAL_PATH := $(call my-dir)
 MAIN_LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 LOCAL_MODULE := qssqredirect
-
-LOCAL_CFLAGS := -Wno-error=format-security -fpermissive -DLOG_TAG=\"VA++\"
+# -DFUCKDEBUG open log
+LOCAL_CFLAGS := -Wno-error=format-security -fpermissive -DLOG_TAG=\"FUCK_QSSQ\" -DQSSQ_SAFE
 LOCAL_CFLAGS += -fno-rtti -fno-exceptions
 LOCAL_CPPFLAGS += -std=c++14
 LOCAL_C_INCLUDES += $(MAIN_LOCAL_PATH)

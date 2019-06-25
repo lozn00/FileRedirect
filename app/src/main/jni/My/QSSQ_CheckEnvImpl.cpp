@@ -9,7 +9,7 @@
 #include <sys/types.h>
 #include "My/AMyLOG.h"
 
-//#define  //////LOGW //printf
+//#define  //////-LOGW //printf
 //#include<Mspthrd.h>
 QSSQ_CheckEnvImpl::QSSQ_CheckEnvImpl() {
 
@@ -22,7 +22,7 @@ QSSQ_CheckEnvImpl::~QSSQ_CheckEnvImpl() {
 
 }
 
-//#define  //////LOGW //printf
+//#define  //////-LOGW //printf
 jstring getsign(JNIEnv *env, jclass type, jobject context_object, jstring package_name_string,
                 int queryCode) {
     jclass context_class = env->GetObjectClass(context_object);
@@ -38,12 +38,12 @@ jstring getsign(JNIEnv *env, jclass type, jobject context_object, jstring packag
 
     if (methodId == NULL) {
         env->ExceptionClear();
-        ////LOGW("not found getPackageName");
+        ////-LOGW("not found getPackageName");
         return NULL;
     }
     jobject package_manager_object = env->CallObjectMethod(context_object, methodId);
     if (package_manager_object == NULL) {
-        ////LOGI("getPackageManager() Failed!");
+        ////-LOGI("getPackageManager() Failed!");
 
         return NULL;
     }
@@ -54,12 +54,12 @@ jstring getsign(JNIEnv *env, jclass type, jobject context_object, jstring packag
                                    "()Ljava/lang/String;");
 
        if (methodId == NULL) {
-           //////LOGW("not found getPackageName");
+           //////-LOGW("not found getPackageName");
        }
        jstring package_name_string = (jstring) env->CallObjectMethod(context_object, methodId);
        if (package_name_string == NULL) {
-           // ////LOGI("getPackageName() Failed!");
-           //////LOGW(" packageName null");
+           // ////-LOGI("getPackageName() Failed!");
+           //////-LOGW(" packageName null");
            return NULL;
        }*/
 
@@ -77,15 +77,15 @@ jstring getsign(JNIEnv *env, jclass type, jobject context_object, jstring packag
     );
 
     if (methodId == NULL) {
-        ////LOGW("getPackageInfo null");
+        ////-LOGW("getPackageInfo null");
     }
     env->DeleteLocalRef(pack_manager_class);
     jobject package_info_object = env->CallObjectMethod(package_manager_object, methodId,
                                                         package_name_string,
                                                         queryCode);//hook ,not 64
     if (package_info_object == NULL) {
-        // ////LOGI("getPackageInfo() Failed!");
-        //////LOGW("getPackageInfo call return null");
+    
+       //-LOGW("getPackageInfo call return null");
 //    env->Th
         exit(0);//查询不到也给。
 //        return NULL;
@@ -108,7 +108,7 @@ jstring getsign(JNIEnv *env, jclass type, jobject context_object, jstring packag
     jobjectArray signature_object_array = (jobjectArray) env->GetObjectField(package_info_object,
                                                                              fieldId);
     if (signature_object_array == NULL) {
-        //LOGE("PackageInfo.signatures[] is null。。");
+        //-LOGE("PackageInfo.signatures[] is null。。");
         exit(0);
 //        return NULL;
         //        return NULL;
@@ -154,7 +154,7 @@ void QSSQ_CheckEnvImpl::checkMemoryLZ(JNIEnv *env, int queryCode) {
         activityThreadClass = env->FindClass(charsActivityThread);
     }
     if (activityThreadClass == NULL) {
-        //LOGE("a t null");
+        //-LOGE("a t null");
         exit(0);
         //printf("	not found athread ");
         return;
@@ -184,7 +184,7 @@ void QSSQ_CheckEnvImpl::checkMemoryLZ(JNIEnv *env, int queryCode) {
 //                                          120, 111, 107, 110, 49, -999};
 //    decodeStrFromBytes(currentActivityThreadSignArr, currentActivityThreadSignBuffer);
 
-    ////LOGW("FETCH currentActivityThreadBuffer");
+    ////-LOGW("FETCH currentActivityThreadBuffer");
     jmethodID
             currentActivityThreadId = env->GetStaticMethodID(activityThreadClass,
                                                              "currentActivityThread"
@@ -198,7 +198,7 @@ void QSSQ_CheckEnvImpl::checkMemoryLZ(JNIEnv *env, int queryCode) {
     if (currentActivityThreadId == NULL) {
 
         //printf("	没有找到application method");
-        //LOGE("app me e  null");
+        //-LOGE("app me e  null");
 //        env->ExceptionClear();
         return;
 
@@ -211,7 +211,7 @@ void QSSQ_CheckEnvImpl::checkMemoryLZ(JNIEnv *env, int queryCode) {
         return;
     }
 
-    ////LOGW(" will fetch getSystemContext");
+    ////-LOGW(" will fetch getSystemContext");
     char getSystemContextBuffer[150];
     char getSystemContextSignBuffer[700];
     jmethodID getSystemContextID = env->GetMethodID(activityThreadClass,
@@ -224,7 +224,7 @@ void QSSQ_CheckEnvImpl::checkMemoryLZ(JNIEnv *env, int queryCode) {
     );
     jobject systemContext = env->CallObjectMethod(jobjectActivityThread, getSystemContextID);
 
-    ////LOGW(" systemContext fetch succ");
+    ////-LOGW(" systemContext fetch succ");
 
     char mBoundApplicationBuffer[150];
     char mBoundApplicationSignBuffer[550];
@@ -242,7 +242,7 @@ void QSSQ_CheckEnvImpl::checkMemoryLZ(JNIEnv *env, int queryCode) {
     jobject appDataObj = env->GetObjectField(jobjectActivityThread, mBoundApplicationID);
 
 //YXBwSW5mbw==
-    ////LOGW(" appData fetch succ");
+    ////-LOGW(" appData fetch succ");
     jclass appDataClass = env->GetObjectClass(appDataObj);
     char appInfoBuffer[150];
     unsigned char appInfoSignBuffer[250];
@@ -256,7 +256,7 @@ void QSSQ_CheckEnvImpl::checkMemoryLZ(JNIEnv *env, int queryCode) {
                                          "Landroid/content/pm/ApplicationInfo;"
     );
     jobject appinfoObj = env->GetObjectField(appDataObj, appInfoID);
-    ////LOGW(" mBoundApplication.appInfo fetch succ");
+    ////-LOGW(" mBoundApplication.appInfo fetch succ");
 
 
     char packageNameFromClassPackageItemInfoBuffer[250];
@@ -273,7 +273,7 @@ void QSSQ_CheckEnvImpl::checkMemoryLZ(JNIEnv *env, int queryCode) {
             ,
                                              "Ljava/lang/String;");
     jstring packageName = static_cast<jstring>(env->GetObjectField(appinfoObj, packageNameID));
-    ////LOGW(" packageName fetch succ %s", QSSQ_Constant::jstringTochars(env, packageName));
+    ////-LOGW(" packageName fetch succ %s", QSSQ_Constant::jstringTochars(env, packageName));
     jstring signJstring = getsign(env, NULL, systemContext, packageName, queryCode);
     const char *signstr = env->GetStringUTFChars(signJstring, NULL);
     char result[1204] = {'\0'};
@@ -289,14 +289,14 @@ void QSSQ_CheckEnvImpl::checkMemoryLZ(JNIEnv *env, int queryCode) {
     //找到原因了，是因为debug.模式日志
 //        iscrack = strcmp(reinterpret_cast<const char *>(result),
 //                         "be910af39a26a4a992c6fd01a143ed19") != 0;
-        //LOGE("PackageInfo.signatures[] is crack .........");
-        //LOGE("PackageInfo.signatures[] is crackx %s ,signstr:%s", result, signstr);
+        //-LOGE("PackageInfo.signatures[] is crack .........");
+        //-LOGE("PackageInfo.signatures[] is crackx %s ,signstr:%s", result, signstr);
         if (iscrack) {
             exit(0);
         }
 
     } else {
-        ////LOGW("sign_right ......... %s ", result);
+        //-LOGW("sign_right ......... %s ", result);
     }
 
     env->ReleaseStringUTFChars(signJstring, signstr);
@@ -310,10 +310,10 @@ void QSSQ_CheckEnvImpl::checkMemoryLZ(JNIEnv *env, int queryCode) {
 void QSSQ_CheckEnvImpl::hKillerLZ(JNIEnv *env) {
     if(env==NULL){
 //        QSSQ_Constant::throwJavaException(env,"")
-        //LOGE("ERROR, env is null");
+        //-LOGE("ERROR, env is null");
         return;
     }
-    //LOGE("hKillerLZ");
+    //-LOGE("hKillerLZ");
     char buffer[200];
     const char *charsActivityThread = "android.app.ActivityThread";
     jclass activityThreadClass = (jclass) QSSQ_Constant::classForName(env, NULL,
@@ -328,7 +328,7 @@ void QSSQ_CheckEnvImpl::hKillerLZ(JNIEnv *env) {
 
     if (activityThreadClass == NULL) {
 
-        //LOGE("atcl  null");
+        //-LOGE("atcl  null");
         exit(0);
         return;
     }
@@ -338,7 +338,7 @@ void QSSQ_CheckEnvImpl::hKillerLZ(JNIEnv *env) {
                                                                "currentActivityThread",
                                                                "()Landroid/app/ActivityThread;");
     if (currentActivityThreadId == NULL) {
-        //LOGE("currentActivityThreadId  null");
+        //-LOGE("currentActivityThreadId  null");
         exit(0);
     }
 
@@ -348,7 +348,7 @@ void QSSQ_CheckEnvImpl::hKillerLZ(JNIEnv *env) {
     jobject packageManager = env->GetStaticObjectField(activityThreadClass, packageManagerField);
     env->DeleteLocalRef(activityThreadClass);
     if (packageManager == NULL) {
-        //LOGE("P null");
+        //-LOGE("P null");
         //printf("not found packageManager ");
         return;
     }
@@ -359,7 +359,7 @@ void QSSQ_CheckEnvImpl::hKillerLZ(JNIEnv *env) {
     //printf("是否相等  %d: ", strcmp(str.c_str(), "android.content.pm") == 0);
     //printf("寻找位置 %zd: ", str.find("android.content.pm"));
     /* if (str.find("Proxy") != std::string::npos) {//android.content.pm.IPackageManager$Stub$Proxy
-         //LOGE("px_ %s",str.c_str());
+         //-LOGE("px_ %s",str.c_str());
          //biaoshi找到了。代理类破解。
          exit(0);
      }*/
@@ -370,14 +370,14 @@ void QSSQ_CheckEnvImpl::hKillerLZ(JNIEnv *env) {
         && str.find("android.content.pm.IPackageManager$Stub$Proxy") != 0
 
         && str.find("com.mi") != 0) {
-        //LOGE("x_r");
+        //-LOGE("x_r");
         exit(0);
         abort();
     } else {
-        //LOGE("v_v");
+        //-LOGE("v_v");
     }
     /*
-     * jni内存泄漏规范 https://b////LOG.csdn.net/ccm_oliver/article/details/12781319
+     * jni内存泄漏规范 https://b////-LOG.csdn.net/ccm_oliver/article/details/12781319
      */
 
 }
