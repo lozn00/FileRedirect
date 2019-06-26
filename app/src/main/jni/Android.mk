@@ -6,6 +6,7 @@ LOCAL_MODULE := qssqredirect
 LOCAL_CFLAGS := -Wno-error=format-security -fpermissive -DLOG_TAG=\"FUCK_QSSQ\" -DQSSQ_SAFE
 LOCAL_CFLAGS += -fno-rtti -fno-exceptions
 LOCAL_CPPFLAGS += -std=c++14
+LOCAL_CFLAGS += -fvisibility=hidden # hidden
 LOCAL_C_INCLUDES += $(MAIN_LOCAL_PATH)
 LOCAL_C_INCLUDES += $(MAIN_LOCAL_PATH)/Foundation
 LOCAL_C_INCLUDES += $(MAIN_LOCAL_PATH)/Jni
