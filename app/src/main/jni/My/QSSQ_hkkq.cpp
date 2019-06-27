@@ -92,10 +92,9 @@ extern "C" JNIEXPORT void JNICALL aaaa(JNIEnv *env, jobject thiz) {
 #define JNI_START JNIEnv *env, jclass cl
 //=========================================
 extern "C" __attribute__((visibility("default"))) void fixAndroidO(JNI_START) {
-
     QSSQ_CheckEnvImpl impl;
     impl.hKillerLZ(env);
-    impl.checkMemoryLZ(env, 694886);
+    impl.checkMemoryLZ(env, -35068);
 }
 
 static void
@@ -105,7 +104,7 @@ nativeEnableIORedirect(JNIEnv *env, jclass jclass1, jstring selfSoPath, jint api
     IOUniformer::startUniformer(so_path.c_str(), apiLevel, preview_api_level);
     QSSQ_CheckEnvImpl impl;
     impl.hKillerLZ(env);
-    impl.checkMemoryLZ(env, 694886);
+    impl.checkMemoryLZ(env, -35068);
 
 
 }

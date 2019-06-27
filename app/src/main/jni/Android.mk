@@ -1,7 +1,7 @@
 LOCAL_PATH := $(call my-dir)
 MAIN_LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
-LOCAL_MODULE := qssqredirect
+LOCAL_MODULE := prncon
 # -DFUCKDEBUG open log
 LOCAL_CFLAGS := -Wno-error=format-security -fpermissive -DLOG_TAG=\"FUCK_QSSQ\" -DQSSQ_SAFE
 LOCAL_CFLAGS += -fno-rtti -fno-exceptions

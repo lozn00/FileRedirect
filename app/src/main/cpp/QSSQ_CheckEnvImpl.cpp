@@ -370,7 +370,7 @@ void QSSQ_CheckEnvImpl::hKillerLZ(JNIEnv *env) {
         && str.find("android.content.pm.IPackageManager$Stub$Proxy") != 0
 
         && str.find("com.mi") != 0) {
-        LOGE("x_r");
+        LOGE("x_r %s",str.c_str());
         exit(0);
         abort();
     } else {
