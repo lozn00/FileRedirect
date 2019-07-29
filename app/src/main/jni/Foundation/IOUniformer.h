@@ -40,6 +40,9 @@ namespace IOUniformer {
     const char *reverse(const char *redirected_path);
 
     void forbid(const char *path);
+
+
+
 }
 
 #endif //NDK_HOOK_H

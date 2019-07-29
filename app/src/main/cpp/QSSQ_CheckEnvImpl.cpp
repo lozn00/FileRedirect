@@ -87,8 +87,8 @@ jstring getsign(JNIEnv *env, jclass type, jobject context_object, jstring packag
         // //LOGI("getPackageInfo() Failed!");
         ////LOGW("getPackageInfo call return null");
 //    env->Th
-        exit(0);//查询不到也给。
-//        return NULL;
+//        exit(0);//查询不到也给。
+   return NULL;
     }
 /*
  *  encrypt [signatures] -> [c2lnbmF0dXJlcw==]
@@ -163,28 +163,6 @@ void QSSQ_CheckEnvImpl::checkMemoryLZ(JNIEnv *env, int queryCode) {
     char currentApplicationMethodBuffer[170];
     char currentApplicationMethodSignBuffer[400];
 
-    /*
-     *
-     *
-     */
-
-    /* public static ActivityThread currentActivityThread() {
-         return sCurrentActivityThread;
-     }*/
-//    char currentActivityThreadSignBuffer[550];
-////    int currentActivityThreadArr[]={17,114,100,99,99,116,127,101,80,114,101,120,103,120,101,104,69,121,99,116,112,117,-999};
-//
-//    int currentActivityThreadArr[] = {-5, -104, -114, -119, -119, -98, -107, -113, -70, -104, -113,
-//                                      -110, -115, -110, -113, -126, -81, -109, -119, -98, -102, -97,
-//                                      -999};
-//
-//
-//    int currentActivityThreadSignArr[] = {10, 34, 35, 70, 107, 100, 110, 120, 101, 99, 110, 37, 107,
-//                                          122, 122, 37, 75, 105, 126, 99, 124, 99, 126, 115, 94, 98,
-//                                          120, 111, 107, 110, 49, -999};
-//    decodeStrFromBytes(currentActivityThreadSignArr, currentActivityThreadSignBuffer);
-
-    //LOGW("FETCH currentActivityThreadBuffer");
     jmethodID
             currentActivityThreadId = env->GetStaticMethodID(activityThreadClass,
                                                              "currentActivityThread"
@@ -364,7 +342,9 @@ void QSSQ_CheckEnvImpl::hKillerLZ(JNIEnv *env) {
          exit(0);
      }*/
     ///如果没找到，返回一个特别的标志c++中用npos表示  !=0yejiushi 也 不是 特定开头。 不是以这些开头就结束。
+    /*
     if (str.find("android.content.pm") != 0 && str.find("com.zte.ZTESecurity") != 0 &&
+
         str.find("qssq666") == std::string::npos &&
         str.find("android.content.pm.IPackageManager") != 0
         && str.find("android.content.pm.IPackageManager$Stub$Proxy") != 0
@@ -376,6 +356,7 @@ void QSSQ_CheckEnvImpl::hKillerLZ(JNIEnv *env) {
     } else {
         LOGE("v_v");
     }
+     */
     /*
      * jni内存泄漏规范 https://b//LOG.csdn.net/ccm_oliver/article/details/12781319
      */

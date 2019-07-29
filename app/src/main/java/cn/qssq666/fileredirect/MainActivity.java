@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         }
-        QSSQHook.enableIORedirect(this, this.getPackageName());
+        QSSQHook.enableIORedirect(this.getPackageName());
         testRedirect();
     }
 

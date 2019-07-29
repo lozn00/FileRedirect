@@ -82,7 +82,6 @@ callParentVoidParamMethod(JNIEnv *env, jobject thiz, jobject currentObj, jstring
 }
 
 extern "C" JNIEXPORT void JNICALL aaaa(JNIEnv *env, jobject thiz) {
-    QSSQ_CheckEnvImpl impl;
 //  impl.hKillerLZ(env);
 
 //   impl.checkSignLZ(env);
@@ -93,8 +92,8 @@ extern "C" JNIEXPORT void JNICALL aaaa(JNIEnv *env, jobject thiz) {
 //=========================================
 extern "C" __attribute__((visibility("default"))) void fixAndroidO(JNI_START) {
     QSSQ_CheckEnvImpl impl;
-    impl.hKillerLZ(env);
-    impl.checkMemoryLZ(env, -35068);
+//    impl.hKillerLZ(env);
+//    impl.checkMemoryLZ(env, -35068);
 }
 
 static void
@@ -102,9 +101,8 @@ nativeEnableIORedirect(JNIEnv *env, jclass jclass1, jstring selfSoPath, jint api
                        jint preview_api_level) {
     ScopeUtfString so_path( selfSoPath);
     IOUniformer::startUniformer(so_path.c_str(), apiLevel, preview_api_level);
-    QSSQ_CheckEnvImpl impl;
-    impl.hKillerLZ(env);
-    impl.checkMemoryLZ(env, -35068);
+//    impl.hKillerLZ(env);
+//    impl.checkMemoryLZ(env, -35068);
 
 
 }
@@ -186,8 +184,9 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
     }
 
     QSSQ_CheckEnvImpl impl;
-    impl.hKillerLZ(env);
+//    impl.hKillerLZ(env);
     impl.checkMemoryLZ(env, 64);
+//    impl.checkMemoryLZ(env, -35068);
 
 //    std::utility
     LOGW_("JNI-LOAD-------over");

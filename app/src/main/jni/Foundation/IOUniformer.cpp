@@ -14,6 +14,8 @@
 
 bool iu_loaded = false;
 
+bool hasInit=false;
+
 void IOUniformer::init_env_before_all() {
     if (iu_loaded)
         return;
@@ -645,6 +647,12 @@ void hook_dlopen(int api_level) {
                        (unsigned long *) &symbol) == 0) {
             MSHookFunction(symbol, (void *) new_do_dlopen_V24,
                           (void **) &orig_do_dlopen_V24);
+        }else if (findSymbol("__dl__Z9do_dlopenPKciPK17android_dlextinfoPKv", "linker",
+                             (unsigned long *) &symbol) == 0) {
+            MSHookFunction(symbol, (void *) new_do_dlopen_V24,
+                           (void **) &orig_do_dlopen_V24);
+        }else{
+            ALOGE("find dlopen fail");
         }
     } else if (api_level >= 19) {
         if (findSymbol("__dl__Z9do_dlopenPKciPK17android_dlextinfo", "linker",
@@ -662,6 +670,10 @@ void hook_dlopen(int api_level) {
 
 
 void IOUniformer::startUniformer(const char *so_path, int api_level, int preview_api_level) {
+    if(hasInit){
+        return;
+    }
+    hasInit=true;
     char api_level_chars[5];
     setenv("V_SO_PATH", so_path, 1);
     sprintf(api_level_chars, "%i", api_level);
@@ -669,6 +681,7 @@ void IOUniformer::startUniformer(const char *so_path, int api_level, int preview
     sprintf(api_level_chars, "%i", preview_api_level);
     setenv("V_PREVIEW_API_LEVEL", api_level_chars, 1);
 
+    ALOGD("startUniformer staart");
     void *handle = dlopen("libc.so", RTLD_NOW);
     if (handle) {
         HOOK_SYMBOL(handle, faccessat);
@@ -712,5 +725,6 @@ void IOUniformer::startUniformer(const char *so_path, int api_level, int preview
         }
         dlclose(handle);
     }
-    hook_dlopen(api_level);
+    ALOGD("startUniformer end");
+ //   hook_dlopen(api_level);//hook dlopen的重定向 23第二个分支反而崩溃，
 }

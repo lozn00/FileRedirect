@@ -61,7 +61,7 @@ public class AppContext extends Application {
         } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
-        System.loadLibrary("qssqredirect");
+        System.loadLibrary("prncon");
     }
 
     @Override
@@ -78,7 +78,7 @@ public class AppContext extends Application {
     }
 
     private void testRedirect() {
-
+        QSSQHook.enableIORedirect(BuildConfig.APPLICATION_ID);
      /*   Log.w(TAG, "onCreate CALL");
         String s;
         s = readFile(filea);
