@@ -642,7 +642,13 @@ int findSymbol(const char *name, const char *libn,
 
 void hook_dlopen(int api_level) {
     void *symbol = NULL;
-    if (api_level > 23) {
+    if (api_level > 25) {
+        if (findSymbol("__dl__Z9do_dlopenPKciPK17android_dlextinfoPKv", "linker",
+                       (unsigned long *) &symbol) == 0) {
+            MSHookFunction(symbol, (void *) new_do_dlopen_V24,
+                           (void **) &orig_do_dlopen_V24);
+        }
+    }else if (api_level > 23) {
         if (findSymbol("__dl__Z9do_dlopenPKciPK17android_dlextinfoPv", "linker",
                        (unsigned long *) &symbol) == 0) {
             MSHookFunction(symbol, (void *) new_do_dlopen_V24,
@@ -684,26 +690,28 @@ void IOUniformer::startUniformer(const char *so_path, int api_level, int preview
     ALOGD("startUniformer staart");
     void *handle = dlopen("libc.so", RTLD_NOW);
     if (handle) {
-        HOOK_SYMBOL(handle, faccessat);
-        HOOK_SYMBOL(handle, __openat);
+
+
+         HOOK_SYMBOL(handle, faccessat);//红米4a闪退得测试
+   HOOK_SYMBOL(handle, __openat);//畅玩7 或者三星 屏蔽就不会生效了。
         HOOK_SYMBOL(handle, fchmodat);
         HOOK_SYMBOL(handle, fchownat);
         HOOK_SYMBOL(handle, renameat);
         HOOK_SYMBOL(handle, fstatat64);
         HOOK_SYMBOL(handle, __statfs);
-        HOOK_SYMBOL(handle, __statfs64);
-        HOOK_SYMBOL(handle, mkdirat);
-        HOOK_SYMBOL(handle, mknodat);
-        HOOK_SYMBOL(handle, truncate);
-        HOOK_SYMBOL(handle, linkat);
-        HOOK_SYMBOL(handle, readlinkat);
-        HOOK_SYMBOL(handle, unlinkat);
+      HOOK_SYMBOL(handle, __statfs64);
+       HOOK_SYMBOL(handle, mkdirat);
+       HOOK_SYMBOL(handle, mknodat);
+       HOOK_SYMBOL(handle, truncate);
+      HOOK_SYMBOL(handle, linkat);
+      HOOK_SYMBOL(handle, readlinkat);
+      HOOK_SYMBOL(handle, unlinkat);
         HOOK_SYMBOL(handle, symlinkat);
-        HOOK_SYMBOL(handle, utimensat);
-        HOOK_SYMBOL(handle, __getcwd);
-//        HOOK_SYMBOL(handle, __getdents64);
-        HOOK_SYMBOL(handle, chdir);
-        HOOK_SYMBOL(handle, execve);
+       HOOK_SYMBOL(handle, utimensat);
+      HOOK_SYMBOL(handle, __getcwd);
+//        HOOK_SYMBOL(handle, __getdents64); //默认屏蔽
+      HOOK_SYMBOL(handle, chdir);
+       HOOK_SYMBOL(handle, execve);
         if (api_level <= 20) {
             HOOK_SYMBOL(handle, access);
             HOOK_SYMBOL(handle, __open);
@@ -720,8 +728,8 @@ void IOUniformer::startUniformer(const char *so_path, int api_level, int preview
             HOOK_SYMBOL(handle, unlink);
             HOOK_SYMBOL(handle, readlink);
             HOOK_SYMBOL(handle, symlink);
-//            HOOK_SYMBOL(handle, getdents);
-//            HOOK_SYMBOL(handle, execv);
+//            HOOK_SYMBOL(handle, getdents);//default 屏蔽
+//            HOOK_SYMBOL(handle, execv);// defualt屏蔽
         }
         dlclose(handle);
     }
