@@ -42,7 +42,8 @@ int fnBase64Encode(char *lpString, char *lpBuffer, int sLen)
 }
 
 //子函数 - 取密文的索引
-inline char GetCharIndex(char c) //内联函数可以省去函数调用过程，提速
+//inline char GetCharIndex(char c) //内联函数可以省去函数调用过程，提速
+ char GetCharIndex(char c) //内联函数可以省去函数调用过程，提速
 {
     if ((c >= 'A') && (c <= 'Z')) {
         return c - 'A';

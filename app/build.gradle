@@ -17,10 +17,11 @@ android {
 //打开hook zz日志。
 //解决roid.injected.build.abi'gradle标志设置的ABIs [armeabi-v7a，armeabi]包含的'ARMEABI'不是此项目的目标
                     cppFlags "-fexceptions", "-fpermissive", "-fno-exceptions"
-                    abiFilters 'armeabi-v7a'
+                    abiFilters "armeabi-v7a","x86"
                 }
                 ndkBuild {
-                    abiFilters "armeabi-v7a"
+                    abiFilters "armeabi-v7a",'x86_64'
+//                    abiFilters "armeabi-v7a",'arm64-v8a'
                 }
             }
         }

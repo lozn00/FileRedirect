@@ -135,14 +135,17 @@ HOOK_DEF(int, fchmod, const char *pathname, mode_t mode) {
 }
 
 
+#ifdef  __NR_fstatat64
 // int fstatat(int dirfd, const char *pathname, struct stat *buf, int flags);
 HOOK_DEF(int, fstatat, int dirfd, const char *pathname, struct stat *buf, int flags) {
     int res;
     const char *redirect_path = relocate_path(pathname, &res);
+
     int ret = syscall(__NR_fstatat64, dirfd, redirect_path, buf, flags);
     FREE(redirect_path, pathname);
     return ret;
 }
+
 
 // int fstatat64(int dirfd, const char *pathname, struct stat *buf, int flags);
 HOOK_DEF(int, fstatat64, int dirfd, const char *pathname, struct stat *buf, int flags) {
@@ -152,7 +155,8 @@ HOOK_DEF(int, fstatat64, int dirfd, const char *pathname, struct stat *buf, int 
     FREE(redirect_path, pathname);
     return ret;
 }
-
+#endif
+#ifdef  __NR_fstat64
 
 // int fstat(const char *pathname, struct stat *buf, int flags);
 HOOK_DEF(int, fstat, const char *pathname, struct stat *buf) {
@@ -162,7 +166,7 @@ HOOK_DEF(int, fstat, const char *pathname, struct stat *buf) {
     FREE(redirect_path, pathname);
     return ret;
 }
-
+#endif
 
 // int mknodat(int dirfd, const char *pathname, mode_t mode, dev_t dev);
 HOOK_DEF(int, mknodat, int dirfd, const char *pathname, mode_t mode, dev_t dev) {
@@ -344,6 +348,7 @@ HOOK_DEF(int, chown, const char *pathname, uid_t owner, gid_t group) {
 
 
 // int lstat(const char *path, struct stat *buf);
+#ifdef  __NR_fstat64
 HOOK_DEF(int, lstat, const char *pathname, struct stat *buf) {
     int res;
     const char *redirect_path = relocate_path(pathname, &res);
@@ -351,7 +356,8 @@ HOOK_DEF(int, lstat, const char *pathname, struct stat *buf) {
     FREE(redirect_path, pathname);
     return ret;
 }
-
+#endif
+#ifdef __NR_stat64
 
 // int stat(const char *path, struct stat *buf);
 HOOK_DEF(int, stat, const char *pathname, struct stat *buf) {
@@ -361,7 +367,7 @@ HOOK_DEF(int, stat, const char *pathname, struct stat *buf) {
     FREE(redirect_path, pathname);
     return ret;
 }
-
+#endif
 
 // int mkdirat(int dirfd, const char *pathname, mode_t mode);
 HOOK_DEF(int, mkdirat, int dirfd, const char *pathname, mode_t mode) {
@@ -408,7 +414,7 @@ HOOK_DEF(ssize_t, readlink, const char *pathname, char *buf, size_t bufsiz) {
     return ret;
 }
 
-
+#ifdef __NR_statfs64
 // int __statfs64(const char *path, size_t size, struct statfs *stat);
 HOOK_DEF(int, __statfs64, const char *pathname, size_t size, struct statfs *stat) {
     int res;
@@ -417,7 +423,7 @@ HOOK_DEF(int, __statfs64, const char *pathname, size_t size, struct statfs *stat
     FREE(redirect_path, pathname);
     return ret;
 }
-
+#endif
 
 // int truncate(const char *path, off_t length);
 HOOK_DEF(int, truncate, const char *pathname, off_t length) {
@@ -430,6 +436,7 @@ HOOK_DEF(int, truncate, const char *pathname, off_t length) {
 
 #define RETURN_IF_FORBID if(res == FORBID) return -1;
 
+#ifdef te64, re
 // int truncate64(const char *pathname, off_t length);
 HOOK_DEF(int, truncate64, const char *pathname, off_t length) {
     int res;
@@ -439,7 +446,7 @@ HOOK_DEF(int, truncate64, const char *pathname, off_t length) {
     FREE(redirect_path, pathname);
     return ret;
 }
-
+#endif
 
 // int chdir(const char *path);
 HOOK_DEF(int, chdir, const char *pathname) {
@@ -697,9 +704,20 @@ void IOUniformer::startUniformer(const char *so_path, int api_level, int preview
         HOOK_SYMBOL(handle, fchmodat);
         HOOK_SYMBOL(handle, fchownat);
         HOOK_SYMBOL(handle, renameat);
-        HOOK_SYMBOL(handle, fstatat64);
+
         HOOK_SYMBOL(handle, __statfs);
-      HOOK_SYMBOL(handle, __statfs64);
+
+#ifdef new___statfs64
+        HOOK_SYMBOL(handle, __statfs64);
+#endif
+#ifdef new_fstatat64
+        HOOK_SYMBOL(handle, fstatat64);
+#endif
+
+
+
+
+
        HOOK_SYMBOL(handle, mkdirat);
        HOOK_SYMBOL(handle, mknodat);
        HOOK_SYMBOL(handle, truncate);
@@ -715,9 +733,15 @@ void IOUniformer::startUniformer(const char *so_path, int api_level, int preview
         if (api_level <= 20) {
             HOOK_SYMBOL(handle, access);
             HOOK_SYMBOL(handle, __open);
+        #ifdef new_stat
             HOOK_SYMBOL(handle, stat);
+        #endif
+        #ifdef new_lstat
             HOOK_SYMBOL(handle, lstat);
+        #endif
+#ifdef new_fssatat
             HOOK_SYMBOL(handle, fstatat);
+#endif
             HOOK_SYMBOL(handle, chmod);
             HOOK_SYMBOL(handle, chown);
             HOOK_SYMBOL(handle, rename);
