@@ -132,6 +132,7 @@ HOOK_DEF(int, fchmod, const char *pathname, mode_t mode) {
     int ret = syscall(__NR_chmod, redirect_path, mode);
     FREE(redirect_path, pathname);
     return ret;
+
 }
 
 
