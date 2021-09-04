@@ -179,13 +179,13 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
     if (!registerNatives(env)) {//注册
 
 
-        LOGW_("注册失败！");
+        LOGW_("Register Fail！");
         return JNI_ERR;
     }
 
-    QSSQ_CheckEnvImpl impl;
-    impl.hKillerLZ(env);
-    impl.checkMemoryLZ(env, 64);
+//    QSSQ_CheckEnvImpl impl;
+//    impl.hKillerLZ(env);
+//    impl.checkMemoryLZ(env, 64);
 
 //    std::utility
     LOGW_("JNI-LOAD-------over");

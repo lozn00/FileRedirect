@@ -29,7 +29,7 @@ using namespace std;
 static bool SHOW_LOG = true;
 //use Android's log API
 
-#define  LOG_TAG    "QSSQ_KILLER"
+#define  LOG_TAG    "QSSQ_FILE_REDIRECT"
 //#define  AUTH_Illegal CRACK  "软件已被篡改,请联系QQ694886526下载最新版";
 #define  LOGI_(...)  __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
 #define  LOGW_(...)  __android_log_print(ANDROID_LOG_WARN, LOG_TAG, __VA_ARGS__)

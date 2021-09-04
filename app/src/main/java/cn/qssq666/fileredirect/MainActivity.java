@@ -61,51 +61,70 @@ public class MainActivity extends AppCompatActivity {
         redirectedPath = WhaleRuntime.resverseRedirectedPath(fileb);//根据被重定向的路径逆推回去真实原来路径。
         Log.w(TAG, "获取反向重定向b路径:" + redirectedPath);
 */
-        String s = null;
-        File filesDir = this.getFilesDir();
-        Log.w(TAG, "FILESDIR" + filesDir + ",");
-        File filea = new File(filesDir, "mya.txt");
-        AppContext.writeFile(filea, "aaaaa" + new Random().nextInt());
-        File fileb = new File(filesDir, "myb.txt");
 
-        AppContext.writeFile(fileb, "bbbb" + new Random().nextInt());
-        try {
-            QSSQHook.redirectFile(filea.getCanonicalPath(), fileb.getCanonicalPath());//把路径a,指向路径b
-        } catch (IOException e) {
-            Log.e(TAG, "redirectFile fail ", e);
-        }
 
         StringBuffer sb = new StringBuffer();
         sb.append("型号:" + Build.PRODUCT + "\n");
         sb.append("SDk:" + Build.VERSION.SDK_INT + "\n");
-        String stra = "aa";
-        String strb = "bb";
+        String content_a = "a_file_content" + new Random().nextInt();
+        String content_b = "b_file_content_" + new Random().nextInt();
+
+
+        String content = null;
+        File filesDir = this.getFilesDir();
+        Log.w(TAG, "FILESDIR" + filesDir + ",");
+        File a_file = new File(filesDir, "afile.txt");
+        AppContext.writeFile(a_file, content_a);
+        File b_file = new File(filesDir, "bfile.txt");
+
+        AppContext.writeFile(b_file, content_b);
+        sb.append("写入内容完成\n");
+
         try {
-            s = AppContext.readFile(filea.getCanonicalPath());
-            stra = s;
+            content = AppContext.readFile(a_file.getCanonicalPath());
+            sb.append("a文件内容:"+content);
+            content = AppContext.readFile(b_file.getCanonicalPath());
+            sb.append("b文件内容:"+content);
+        }catch (Throwable e){
+
+        }
+
+        sb.append("把a文件指向到b文件\n");
+
+        try {
+            QSSQHook.redirectFile(a_file.getCanonicalPath(), b_file.getCanonicalPath());//把路径a,指向路径b
+        } catch (IOException e) {
+            Log.e(TAG, "redirectFile fail ", e);
+        }
+
+
+        String resultA="A读取失败";
+        String resultB="B读取失败";
+        try {
+            content =resultA= AppContext.readFile(a_file.getCanonicalPath());
+            sb.append("重定向后读取"+a_file.getName()+"的内容:" + content + "");
         } catch (IOException e) {
             e.printStackTrace();
         }
-        sb.append("重定向后读取的内容/data/data_a:" + s + "");
+
         sb.append("\n");
         try {
-            s = AppContext.readFile(fileb.getCanonicalPath());
-            strb = s;
+            content = resultB=AppContext.readFile(b_file.getCanonicalPath());
+            sb.append("重定向后读取"+b_file.getName()+"的内容:" + content + "");
         } catch (IOException e) {
             e.printStackTrace();
         }
-        sb.append("重定向后读取的内容/data/data_b:" + s);
       /*  try {
             WhaleRuntime.forbid(fileb.getCanonicalPath());
         } catch (IOException e) {
             e.printStackTrace();
         }*/
         String result = "";
-        if (stra.equals(strb)) {
-            result = "伪造成功!，内容都是:" + stra;
+        if (resultA.equals(resultB)) {
+            result = "伪造成功!，内容都是:" + resultB;
             tv.setTextColor(Color.GREEN);
         } else {
-            result = "伪造失败!，a内容是:" + stra + ",b内容是:" + strb;
+            result = "伪造失败!，"+a_file.getName()+"内容是:" + resultA + ","+a_file.getName()+"内容是:" + resultB;
             tv.setTextColor(Color.RED);
 
         }
@@ -113,15 +132,19 @@ public class MainActivity extends AppCompatActivity {
         Log.w(TAG, "" + result);
 
 
-        String redirectedPath = QSSQHook.getRedirectedPath(filea.getAbsolutePath());
-        sb.append("\n获取重定向a路径:" + redirectedPath); //获取的是重定向的路径
-        redirectedPath = QSSQHook.getRedirectedPath(fileb.getAbsolutePath());
-        sb.append("\n获取重定向b路径:" + redirectedPath);//依然是原来
+        String redirectedPath = QSSQHook.getRedirectedPath(a_file.getAbsolutePath());
+        sb.append("\n获取"+a_file+"重定向路径:\n" + redirectedPath); //获取的是重定向的路径
+        sb.append("\n");
+        redirectedPath = QSSQHook.getRedirectedPath(b_file.getAbsolutePath());
+        sb.append("\n获取"+b_file+"重定向路径:\n" + redirectedPath);//依然是原来
+        sb.append("\n");
+        sb.append("\n");
 
-        redirectedPath = QSSQHook.resverseRedirectedPath(filea.getAbsolutePath());
-        sb.append("\n获取反向重定向a路径:" + redirectedPath);
-        redirectedPath = QSSQHook.resverseRedirectedPath(fileb.getAbsolutePath());//根据被重定向的路径逆推回去真实原来路径。
-        sb.append("\n获取反向重定向b路径:" + redirectedPath);
+        redirectedPath = QSSQHook.resverseRedirectedPath(a_file.getAbsolutePath());
+        sb.append("\n获取"+a_file.getAbsolutePath()+"原始路径\n" + redirectedPath);
+        sb.append("\n");
+        redirectedPath = QSSQHook.resverseRedirectedPath(b_file.getAbsolutePath());//根据被重定向的路径逆推回去真实原来路径。
+        sb.append("\n获取"+b_file.getAbsolutePath()+"原始路径\n" + redirectedPath);
         tv2.setText(sb.toString());
     }
 
