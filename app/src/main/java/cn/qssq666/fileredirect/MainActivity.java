@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import java.io.File;
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.util.Random;
 
 import cn.qssq666.QSSQHook;
+import cn.qssq666.fileredirect.tool.MyTool;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,8 +37,17 @@ public class MainActivity extends AppCompatActivity {
 
             }
         }
-        QSSQHook.enableIORedirect(this.getPackageName());
-        testRedirect();
+
+//        QSSQHook.launchEngine();
+        QSSQHook.startDexOverride();
+        findViewById(R.id.btn_reload).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                QSSQHook.enableIORedirect(MainActivity.this);
+                testRedirect();
+            }
+        });
+//        testRedirect();
     }
 
     private void testRedirect() {
@@ -74,16 +85,16 @@ public class MainActivity extends AppCompatActivity {
         File filesDir = this.getFilesDir();
         Log.w(TAG, "FILESDIR" + filesDir + ",");
         File a_file = new File(filesDir, "afile.txt");
-        AppContext.writeFile(a_file, content_a);
+        MyTool.writeFile(a_file, content_a);
         File b_file = new File(filesDir, "bfile.txt");
 
-        AppContext.writeFile(b_file, content_b);
+        MyTool.writeFile(b_file, content_b);
         sb.append("写入内容完成\n");
 
         try {
-            content = AppContext.readFile(a_file.getCanonicalPath());
+            content = MyTool.readFile(a_file.getCanonicalPath());
             sb.append("a文件内容:"+content);
-            content = AppContext.readFile(b_file.getCanonicalPath());
+            content = MyTool.readFile(b_file.getCanonicalPath());
             sb.append("b文件内容:"+content);
         }catch (Throwable e){
 
@@ -101,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
         String resultA="A读取失败";
         String resultB="B读取失败";
         try {
-            content =resultA= AppContext.readFile(a_file.getCanonicalPath());
+            content =resultA= MyTool.readFile(a_file.getCanonicalPath());
             sb.append("重定向后读取"+a_file.getName()+"的内容:" + content + "");
         } catch (IOException e) {
             e.printStackTrace();
@@ -109,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
 
         sb.append("\n");
         try {
-            content = resultB=AppContext.readFile(b_file.getCanonicalPath());
+            content = resultB=MyTool.readFile(b_file.getCanonicalPath());
             sb.append("重定向后读取"+b_file.getName()+"的内容:" + content + "");
         } catch (IOException e) {
             e.printStackTrace();

@@ -10,10 +10,25 @@
 
 
 #include "Helper.h"
-#include "Foundation/VMPatch.h"
-#include "Foundation/IOUniformer.h"
+#include "Foundation/VMHook.h"
+#include "../Foundation/IORelocator.h"
+//TODO 修改屏蔽
+//#define JNI_CLASS_NAME "com/lody/virtual/client/NativeEngine"
+#define JNI_CLASS_NAME "cn/qssq666/QSSQHook"
 
-extern alias_ref<jclass> nativeEngineClass;
+#if defined(__LP64__)
+typedef long jni_ptr;
+#else
+typedef int jni_ptr;
+#endif
+
+extern jclass nativeEngineClass;
+extern JavaVM * vm;
+
+JNIEnv *getEnv();
+
+JNIEnv *ensureEnvCreated();
+
 
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved);
 JNIEXPORT void JNICALL JNI_OnUnload(JavaVM* vm, void* reserved);

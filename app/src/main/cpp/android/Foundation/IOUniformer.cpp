@@ -131,8 +131,8 @@ void IOUniformer::init_env_before_all() {
         return;
     char *api_level_chars = getenv("V_API_LEVEL");
     char *preview_api_level_chars = getenv("V_PREVIEW_API_LEVEL");
-    if (api_level_chars) {
         LOGW("Enter init before all.");
+    if (api_level_chars) {
         int api_level = atoi(api_level_chars);
         int preview_api_level;
         preview_api_level = atoi(preview_api_level_chars);

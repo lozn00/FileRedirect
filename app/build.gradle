@@ -1,11 +1,18 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 28
+
+    lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
+    }
+    compileSdkVersion 30
     defaultConfig {
         applicationId "cn.qssq666.fileredirect"
         minSdkVersion 15
-        targetSdkVersion 28
+        targetSdkVersion 22
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -20,41 +27,32 @@ android {
                     abiFilters "armeabi-v7a","x86"
                 }
                 ndkBuild {
-                    abiFilters "armeabi-v7a",'x86','x86_64'
+                    abiFilters "armeabi-v7a",'arm64-v8a'
 //                    abiFilters "armeabi-v7a",'arm64-v8a'
                 }
             }
         }
     }
+    def signFile = System.getenv("qssqsignfile");
+    def useSign = signFile != null && signFile.length() > 0 && new java.io.File(signFile).exists();
+    if (useSign) {
+        signingConfigs {
+            release {
 
-    signingConfigs {
-        debug {
-
-
-            Properties properties = new Properties()
-            properties.load(project.rootProject.file(System.getenv("qssqsignfile")).newDataInputStream())
-            def keyPwd = properties.getProperty("signingConfigs.keyPwd")
-            def keyName = properties.getProperty("signingConfigs.keyName")
-            def keyPath = properties.getProperty("signingConfigs.path")
-            storeFile file(keyPath)
-            storePassword keyPwd
-            keyAlias keyName
-            keyPassword keyPwd
-
+                Properties properties = new Properties()
+                def confile=System.getenv("qssqsignfile")
+                properties.load(project.rootProject.file(confile).newDataInputStream())
+                def keyPwd = properties.getProperty("signingConfigs.keyPwd")
+                def keyName = properties.getProperty("signingConfigs.keyName")
+                def keyPath = properties.getProperty("signingConfigs.path")
+                storeFile file(keyPath.contains(":")?keyPath:new File(new File(confile).getParentFile().absolutePath,keyPath).absolutePath)
+                storePassword keyPwd
+                keyAlias keyName
+                keyPassword keyPwd
+            }
         }
-        release {
 
-            Properties properties = new Properties()
-            properties.load(project.rootProject.file(System.getenv("qssqsignfile")).newDataInputStream())
-            def keyPwd = properties.getProperty("signingConfigs.keyPwd")
-            def keyName = properties.getProperty("signingConfigs.keyName")
-            def keyPath = properties.getProperty("signingConfigs.path")
-            storeFile file(keyPath)
-            storePassword keyPwd
-            keyAlias keyName
-            keyPassword keyPwd
 
-        }
     }
     sourceSets {
         main {
@@ -64,12 +62,16 @@ android {
     buildTypes {
         debug {
             minifyEnabled false
-            signingConfig signingConfigs.release
+            if (useSign) {
+                signingConfig signingConfigs.release
+            }
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         release {
             minifyEnabled false
-            signingConfig signingConfigs.release
+            if (useSign) {
+                signingConfig signingConfigs.release
+            }
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -97,6 +99,57 @@ android {
     }
 
 
+}
+
+
+gradle.taskGraph.afterTask { task ->
+    def TASK_NAME = "stripReleaseDebugSymbols"
+//    def TASK_NAME = "transformNativeLibsWithStripDebugSymbolFor"
+    def COPY_ABI_LIST = [
+            "lib/armeabi/",
+            "lib/armeabi-v7a/",
+    ]
+
+    def COPY_FOR_HOUDINI_ABI_LIST = [
+            "lib/x86/"
+    ]
+    if (task.name.startsWith(TASK_NAME)&&COMPILE_JNI) {
+        println("performing lib64 transforming...")
+        String buildType = task.name.substring(TASK_NAME.length()).toLowerCase(Locale.US)
+        File root = new File(buildDir, "intermediates/transforms/stripDebugSymbol/${buildType}")
+        // 0\lib\arm64-v8a
+        for (File numberDir : root.listFiles()) {
+            if (!numberDir.isDirectory()) {
+                continue
+            }
+            File soDir = new File(numberDir, "lib/arm64-v8a")
+            for (File soFile : soDir.listFiles()) {
+                if (soFile.name.endsWith(".so")) {
+                    for (String abi : COPY_ABI_LIST) {
+                        def toFile = new File(numberDir, abi + soFile.name)
+                        GFileUtils.copyFile(soFile, toFile)
+                    }
+                    for (String abi : COPY_FOR_HOUDINI_ABI_LIST) {
+                        def toFile = new File(numberDir, abi + soFile.name)
+                        toFile.getParentFile().mkdirs()
+                        toFile.createNewFile()
+                    }
+//                    soFile.delete()
+                    println("copy : " + soFile.path)
+                }
+            }
+            soDir = new File(numberDir, "lib/armeabi-v7a")
+            for (File soFile : soDir.listFiles()) {
+                if (soFile.name.endsWith("prncon.so")) {
+                    def toFile = new File(numberDir, "lib/arm64-v8a/" + soFile.name)
+                    GFileUtils.copyFile(soFile, toFile)
+//                    soFile.delete()
+                    println("copy : " + soFile.path)
+                }
+            }
+//            soDir.delete()
+        }
+    }
 }
 
 
