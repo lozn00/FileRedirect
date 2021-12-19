@@ -181,6 +181,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *_vm, void *) {
     };
 
     if (env->RegisterNatives(nativeEngineClass, methods, 19) < 0) {
+        printf("jni_load- register_fail---------------------------");
         return JNI_ERR;
     }
 
@@ -191,7 +192,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *_vm, void *) {
     jclass VSCKMSClass = env->FindClass("com/xdja/zs/VSafekeyCkmsManager");
     vsckmsClass = (jclass)env->NewGlobalRef(VSCKMSClass);
     env->DeleteLocalRef(VSCKMSClass);*/
-
+    printf("jni_load----------------------------");
     zJNIEnv::initial(vm);
     controllerManagerNative::initial();
 
@@ -213,5 +214,6 @@ JNIEnv *ensureEnvCreated() {
 }
 
 extern "C" __attribute__((constructor)) void _init(void) {
+    printf("init_callcccccccccccccccccccccccccc----------------------------");
     IOUniformer::init_env_before_all();
 }

@@ -18,7 +18,7 @@ public class MyTool {
     private static final String TAG = "MyTool";
 
     public static void testRedirect(Context context) {
-        QSSQHook.enableIORedirect(context);
+
      /*   Log.w(TAG, "onCreate CALL");
         String s;
         s = readFile(filea);

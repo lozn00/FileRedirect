@@ -106,6 +106,7 @@ int get_replace_item_count() {
 inline bool
 match_path(bool is_folder, size_t size, const char *item_path, const char *path, size_t path_len) {
     if (is_folder) {
+        printf("itempath %s path %s",item_path,path);
         if (path_len < size) {
             // ignore the last '/'
             return strncmp(item_path, path, size - 1) == 0 && item_path[size - 1] == '/';
@@ -131,14 +132,16 @@ const char *relocate_path_internal(const char *path, char *const buffer, const s
     if (NULL == path) {
         return path;
     }
+    printf("relocate_path_internal call %s ",path);
     const char *orig_path = path;
     path = canonicalize_path(path, buffer, size);
 
     const size_t len = strlen(path);
-
+    printf("relocate_path_internal %s %s",path,buffer);
     for (int i = 0; i < keep_item_count; ++i) {
         PathItem &item = keep_items[i];
         if (match_path(item.is_folder, item.size, item.path, path, len)) {
+    printf("match_patch_return %s ",path);
             return orig_path;
         }
     }
@@ -146,6 +149,7 @@ const char *relocate_path_internal(const char *path, char *const buffer, const s
     for (int i = 0; i < forbidden_item_count; ++i) {
         PathItem &item = forbidden_items[i];
         if (match_path(item.is_folder, item.size, item.path, path, len)) {
+            printf("match_patch_disable path %s ",path);
             return NULL;
         }
     }
@@ -161,6 +165,7 @@ const char *relocate_path_internal(const char *path, char *const buffer, const s
                 const size_t remain_size = len - item.orig_size + 1u;
                 if (size < item.new_size + remain_size) {
                     ALOGE("buffer overflow %u", static_cast<unsigned int>(size));
+                    printf("overflow path %s ",path);
                     return NULL;
                 }
 
@@ -174,10 +179,12 @@ const char *relocate_path_internal(const char *path, char *const buffer, const s
                     memcpy(buffer, item.new_path, item.new_size);
                     memcpy(buffer + item.new_size, remain_temp, remain_size);
                 }
+                printf("match_path path %s ",buffer);
                 return buffer;
             }
         }
     }
+    printf("no match_path path %s ",orig_path);
     return orig_path;
 }
 

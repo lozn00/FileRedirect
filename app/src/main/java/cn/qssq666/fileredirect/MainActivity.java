@@ -43,8 +43,8 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_reload).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                QSSQHook.enableIORedirect(MainActivity.this);
                 testRedirect();
+                QSSQHook.enableIORedirect(MainActivity.this);
             }
         });
 //        testRedirect();
