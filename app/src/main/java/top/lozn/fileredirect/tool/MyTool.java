@@ -1,4 +1,4 @@
-package cn.qssq666.fileredirect.tool;
+package top.lozn.fileredirect.tool;
 
 import android.content.Context;
 import android.util.Log;
@@ -11,7 +11,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Random;
 
-import cn.qssq666.QSSQHook;
+import top.lozn.QSSQHook;
 
 public class MyTool {
 

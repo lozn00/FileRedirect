@@ -1,4 +1,4 @@
-package cn.qssq666.fileredirect;
+package top.lozn.fileredirect;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

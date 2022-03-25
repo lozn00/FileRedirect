@@ -145,7 +145,7 @@ nativeReverseRedirectedPath(JNIEnv *env, jclass jclazz, jstring redirectedPath) 
 }
 
 
-#define ENCODECLASS "cn/qssq666/QSSQHook"//指定要注册的
+#define ENCODECLASS "top/lozn/QSSQHook"//指定要注册的
 
 //#define ENCODECLASS "android/support/v4/app/gnehzoul"//指定要注册的
 int registerNatives(JNIEnv *env) {

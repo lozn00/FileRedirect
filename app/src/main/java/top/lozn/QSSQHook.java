@@ -1,20 +1,15 @@
-package cn.qssq666;
+package top.lozn;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.os.Build;
-import android.os.Process;
 import android.support.annotation.Keep;
-import android.support.v4.os.BuildCompat;
 import android.util.Log;
 import android.util.Pair;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;

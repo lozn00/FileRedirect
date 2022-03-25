@@ -1,20 +1,11 @@
-package cn.qssq666.fileredirect;
+package top.lozn.fileredirect;
 
 import android.app.Application;
-import android.content.pm.ApplicationInfo;
-import android.os.Binder;
 import android.util.Log;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Random;
 
 
 public class AppContext extends Application {

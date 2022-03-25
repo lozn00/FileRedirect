@@ -14,7 +14,7 @@
 #include "../Foundation/IORelocator.h"
 //TODO 修改屏蔽
 //#define JNI_CLASS_NAME "com/lody/virtual/client/NativeEngine"
-#define JNI_CLASS_NAME "cn/qssq666/QSSQHook"
+#define JNI_CLASS_NAME "top/lozn/QSSQHook"
 
 #if defined(__LP64__)
 typedef long jni_ptr;

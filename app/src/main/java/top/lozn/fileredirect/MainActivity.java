@@ -1,4 +1,4 @@
-package cn.qssq666.fileredirect;
+package top.lozn.fileredirect;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -15,8 +15,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Random;
 
-import cn.qssq666.QSSQHook;
-import cn.qssq666.fileredirect.tool.MyTool;
+import top.lozn.QSSQHook;
+import top.lozn.fileredirect.tool.MyTool;
 
 public class MainActivity extends AppCompatActivity {
 
